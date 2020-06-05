@@ -8,9 +8,11 @@ const userRoutes= require("./routers/users.js")
 var port= process.env.PORT||3000
 var app=express()
 
-app.use(express.json())
-app.use(userRoutes)
 
+app.use(express.json())
+
+app.use(express.static('uploads'))
+app.use(userRoutes)
 app.listen(port,()=>{
     console.log("Server has started listening on port "+port)
 })

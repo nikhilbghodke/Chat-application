@@ -31,6 +31,11 @@ const schema= mongoose.Schema({
         trim:true,
         default:"Available"
     },
+    avatar:{
+        type:String,
+        default:"default.jpg",
+        trim:true
+    },
     tokens:[
         {
         token:{

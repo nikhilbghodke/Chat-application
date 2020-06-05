@@ -1,10 +1,45 @@
+const path = require('path');
 const express= require("express")
+const multer= require("multer")
 const User = require("../models/user.js")
 const auth=require("../middlewares/auth.js")
 
+const uploadDir= path.join(__dirname,"../../uploads")
 var app=express.Router()
 
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, uploadDir)
+    },
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)+".jpg"
+      req.name=uniqueSuffix
+      cb(null, file.fieldname + '-' + uniqueSuffix)
+    }
+  })
+  
+var upload = multer({ storage: storage }).single('avatar')
 
+//upload profile picture
+app.post('/profilePic', auth,async function (req, res) {
+    upload(req, res, async function (err) {
+      if (err) {
+          return res.status(500).send(err)
+      }
+      console.log(req.name)
+      var user=req.user
+      user.avatar=req.name
+      await user.save()
+      res.send({
+          success:true,
+          user:user
+      })
+    })
+  })
+app.get("/profilePic", auth, async function(req,res){
+    var img=path.join(__dirname,"../../uploads/avatar-"+req.user.avatar)
+    res.sendFile(img)
+})
 
 app.post("/signup", async (req,res)=>{
    
@@ -83,7 +118,6 @@ app.patch("/users", auth ,async (req,res)=>{
         res.status(500).send(e)
     }
 })
-
 
 
 app.get("/users", async (req,res)=>{
