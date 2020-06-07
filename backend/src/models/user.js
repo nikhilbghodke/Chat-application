@@ -92,6 +92,16 @@ schema.pre('save', async function(next){
 	next()
 })
 
+schema.methods.toJSON=function(){
+	const user=this
+	const userObject=user.toObject()
+
+	delete userObject.tokens
+	delete userObject.password
+
+	return userObject
+}
+
 
 const User= new mongoose.model("User",schema)
 

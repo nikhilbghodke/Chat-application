@@ -5,10 +5,10 @@ const userRoutes= require("./routers/users.js")
 const roomRouters=require("./routers/rooms.js")
 const channelRouters = require("./routers/channels")
 const messageRouters = require("./routers/messages")
-const db=require("./database/mongo")
-var port= process.env.PORT||8081
+const db=require("./db/mongoose")
+var port= process.env.PORT||3000
 var app=express()
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+//db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 app.use(express.json())
 

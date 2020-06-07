@@ -25,6 +25,10 @@ const schema= mongoose.Schema({
     ]
 })
 
+schema.methods.isOwner= function(user){
+    return this.owner.equals(user._id)
+}
+
 const Room = new mongoose.model('Room',schema)
 
 module.exports=Room
