@@ -17,6 +17,19 @@ const schema= mongoose.Schema({
         ref:'User',
         required:true
     },
+    private:{
+        type:"Boolean",
+        default:false
+    },
+    invites:[
+        {
+            type:"String",
+            validate:function(value){
+                if(!validator.isEmail(value))
+                    throw new Error("Invalid email provided")
+            }
+        }
+    ],
     members:[
         {
             type:mongoose.Schema.Types.ObjectId,

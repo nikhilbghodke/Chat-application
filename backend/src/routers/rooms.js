@@ -1,7 +1,9 @@
 const express= require("express")
 const auth=require("../middlewares/auth.js")
+const roomowner =require("../middlewares/roomOwnerAuth.js")
 const Room= require("../models/room.js")
 const User=require("../models/user.js")
+const sendEmail=require("../utils/sendEmail.js")
 
 const app= express.Router()
 
@@ -28,11 +30,21 @@ app.post("/rooms/:title/join", auth,async (req,res)=>{
     if(!room)
         return res.status(404).send(req.params.title+" so such room")
     var user= room.members.filter((val)=>{
-        return val==req.user._id
+        return val.equals(req.user._id)
     })
-    console.log(user)
+
     if(user.length!=0)
         return res.status(400).send("You are already part of Room")
+
+    if(room.private){
+        var isInvited=room.invites.includes(req.user.email)
+        if(!isInvited)
+           return res.status(401).send("You not are invited to this room")
+        room.invites=room.invites.filter((val)=>{
+            console.log(typeof(val))
+            return val!=(req.user.email)
+        })
+    }
     room.members.push(req.user._id)
     await room.save()
     res.send(room)
@@ -48,11 +60,33 @@ app.post("/rooms/:title/leave", auth,async (req,res)=>{
         return res.status(404).send(req.params.title+" so such room")
     }
     room.members= room.members.filter((val)=>{
-        return val.equals(req.user._id)
+        return !val.equals(req.user._id)
     })
     await room.save()
     res.send(room)
 
+})
+
+app.post("/rooms/:title/invite", roomowner, async (req,res)=>{
+    try{
+        var room= req.room
+        var to= req.user.email
+        var roomName= room.title
+        var sender=req.user.email
+        room.invites= room.invites.concat(req.body)
+        req.body.forEach(async (val)=>{
+            await sendEmail(val,{
+                to,
+                roomName
+            })
+        })
+        await room.save()
+        res.send(room)
+    }
+    catch(e){
+        console.log(e)
+        res.status(500).send(e)
+    }
 })
 
 app.get("/rooms/:title", auth, async (req,res)=>{
@@ -157,5 +191,8 @@ app.delete("/deleteAll", async (req,res)=>{
     await Room.deleteMany({})
     res.send("All rooms deleted")
 })
+
+
+
 
 module.exports=app
