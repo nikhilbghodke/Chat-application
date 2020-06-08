@@ -15,9 +15,15 @@ const auth= async function(req,res,next){
             title:req.params.title
         })
         if(!room)
-           return res.status(404).send("No such room found")
+        return next({
+            status: 404,
+            message: "No room with given name exist"
+        })
         if(!room.isOwner(user))
-           return res.status(401).send("Only onwer of room can perform this operation")
+        return next({
+            status: 401,
+            message: "Only owner can do this!"
+        })
         
         req.room=room
         req.user=user
@@ -26,7 +32,10 @@ const auth= async function(req,res,next){
     }
     catch(e){
         console.log(e)
-        res.status(401).send(e)
+        return next({
+            status: 404,
+            message: e.message
+        })
     }
     
 }
