@@ -1,0 +1,102 @@
+<html>
+<head>
+	<title>Chat Application</title>
+	<link rel="icon" href="/img/favicon.png">
+	<link rel="stylesheet" href="/css/styles.css">
+</head>
+	<body>
+		<div class="chat">
+			<div class="chat__sidebar">
+        <h2 class="room-title"></h2>
+        <h3 class="list-title">Users</h3>
+        <ul id="users"></ul>
+			</div>
+			<div class="chat__main">
+				<div class="chat__messages">
+					<ul id="messages"></ul>
+				</div>
+				<div class="compose">
+					<form id="message-form">
+						<input type="text" id="userInput" placeholder="message" required autocomplete="off">
+						<button id="send">send</button>
+					</form>
+				<button id="sendLocation">Send Location</button>
+				</div>
+			</div>
+		</div>
+		
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.6.0/qs.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+		<script>
+  			var socket = io();
+  			var userInput=document.getElementById("userInput");
+  			var  locationButton=document.getElementById("sendLocation");
+
+        const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true })
+        $('.room-title')[0].innerHTML=room
+  			socket.on('recieve', function(msg){
+  				$('#messages').append("<div class='message'><p><span class='message__name'>"+msg.sender+"</span><span class='message__meta'>"+msg.time+"</span></p><p>"+msg.text+"</p></div>");
+  				console.log(msg)
+  			})
+  			socket.on('recieveLocation', function(msg){
+  				$('#messages').append("<div class='message'><p><span class='message__name'>"+msg.sender+"</span><span class='message__meta'>"+msg.time+"</span></p><p><a href='"+msg.text +"'>My Current Location </a></p></div>");
+  				console.log(msg)
+  			})
+
+
+  			document.getElementById("message-form").addEventListener('submit',(e)=>{
+  				e.preventDefault()
+  				//console.log("Clicked")
+  				var msg= userInput.value
+  				
+  				socket.emit('send',msg,(error)=>{
+  					userInput.value=""
+  					userInput.focus()
+  					if(error)
+  						return alert(error)
+  					console.log("message delivered")
+  				})
+  			})
+
+  			locationButton.addEventListener('click',()=>{
+  				if(!navigator.geolocation)
+  					return alert("geoLocation is not supported by ur browser")
+
+  				navigator.geolocation.getCurrentPosition((position)=>{
+  					console.log(position)
+  					locationButton.disabled=true
+  					socket.emit("sendLocation","https://google.com/maps?q="+position.coords.latitude+","+position.coords.longitude,(msg)=>{
+  						locationButton.disabled=false;
+  						console.log(msg)
+  					})
+  				})
+  			})
+        console.log(username,room)
+        socket.emit('join',Qs.parse(location.search, { ignoreQueryPrefix: true }), (error)=>{
+            if(error)
+            {
+              alert(error)
+              location.href="/"
+            }
+        })
+    
+
+        socket.on("roomData",(obj)=>{
+
+          var html=""
+          obj.users.forEach((u)=>{
+            html+="<li>"+u.username+"</li>" 
+          })
+          console.log(html)
+          //$('.room-title').innerHTML=obj.room
+          $('#users').empty()
+          $('#users').append(html)
+        })
+
+		</script>
+	</body>
+</html>
