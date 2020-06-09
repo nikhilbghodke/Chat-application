@@ -1,7 +1,7 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, withRouter } from 'react-router-dom'
 
-export default function UserSignIn() {
+ function UserSignIn(props) {
     return (
         <div className="form">
             <p className="form-title">
@@ -23,7 +23,7 @@ export default function UserSignIn() {
                 name="password"
             />
             <br />
-            <button className="form-submit">
+            <button type="button" className="form-submit" onClick={() => props.history.push("/rooms")} >
                 Let's go!
             </button>
             <p className="form-bottom-text">
@@ -33,3 +33,4 @@ export default function UserSignIn() {
         </div>
     );
 }
+export default withRouter(UserSignIn);

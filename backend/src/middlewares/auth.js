@@ -16,7 +16,10 @@ const auth= async function(req,res,next){
         next()
     }
     catch(e){
-        res.status(401).send(e)
+        return next({
+            status: 401,
+            message: e.message
+        })
     }
     
 }
