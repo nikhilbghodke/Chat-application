@@ -7,15 +7,16 @@ var port = process.env.PORT || 8081
 const app = express.Router()
 
 //create channel
-app.post("/channels/:id", async (req, res) => {
+app.post("/channels/:title", async (req, res) => {
     try {
         var channel = new Channel(req.body)
-        var room = await Room.find({
-            id: req.params.id
+        var room = await Room.findOne({
+            title: req.params.title
         })
         console.log(room)
-        if (room != null) {
-            channel.room = req.params.id;
+        if (room.length!=0) {
+            channel.room = room._id;
+            console.log(channel)
             await channel.save()
             res.status(201).send(channel)
         }
@@ -83,11 +84,9 @@ app.patch("/channels/:title", async (req, res) => {
 })
 
 //get all channels in room
-app.get("/allChannels/:roomid", async (req, res) => {
-    var roomid=req.params.roomid
-    const channels = await Channel.find({
-        room:roomid
-    })
+app.get("/allChannels/:title", async (req, res) => {
+    var title=req.params.title
+    var channels= await Room.getAllChannels(title)
     res.send(channels)
 })
 

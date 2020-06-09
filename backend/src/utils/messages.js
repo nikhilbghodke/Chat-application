@@ -1,11 +1,10 @@
-const generateMessage= function(sender,msg){
+const generateMessage= function(packet){
 	var options = {hour:"2-digit",minute:"2-digit", second:"2-digit", weekday: 'long' };
 	var today  = new Date();
-
+	
 	var time=today.toLocaleDateString("hi-IN", options);
 	return {
-		sender,
-		text:msg,
+		...packet,
 		time
 	}
 }

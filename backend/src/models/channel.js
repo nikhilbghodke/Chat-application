@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const channelSchema = new mongoose.Schema({
     room: {
-        type: mongoose.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Room",
         required: true
     },

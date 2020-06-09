@@ -43,7 +43,10 @@ const schema= mongoose.Schema({
             required:true
         }
         }
-    ]
+    ],
+    lastSeen:{
+        type:Date
+    }
 },{
 	timestamps:true,
 })

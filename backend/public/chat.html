@@ -17,6 +17,7 @@
 				</div>
 				<div class="compose">
 					<form id="message-form">
+						<input type="text" placeholder="channel" value="general" id="channel">
 						<input type="text" id="userInput" placeholder="message" required autocomplete="off">
 						<button id="send">send</button>
 					</form>
@@ -34,16 +35,17 @@
 		<script>
   			var socket = io();
   			var userInput=document.getElementById("userInput");
-  			var  locationButton=document.getElementById("sendLocation");
+			var  locationButton=document.getElementById("sendLocation");
+			var channelInput=document.getElementById("channel")
 
-        const { username, room } = Qs.parse(location.search, { ignoreQueryPrefix: true })
+        const { username, room , token} = Qs.parse(location.search, { ignoreQueryPrefix: true })
         $('.room-title')[0].innerHTML=room
-  			socket.on('recieve', function(msg){
-  				$('#messages').append("<div class='message'><p><span class='message__name'>"+msg.sender+"</span><span class='message__meta'>"+msg.time+"</span></p><p>"+msg.text+"</p></div>");
-  				console.log(msg)
+  			socket.on('recieve', function({username,msg,room,channel,time}){
+  				$('#messages').append("<div class='message'><p><span class='message__name'>"+username+"</span><span class='message__meta'>"+time+"</span></p><p>"+channel+";- "+msg+"</p></div>");
+  				console.log(channel)
   			})
-  			socket.on('recieveLocation', function(msg){
-  				$('#messages').append("<div class='message'><p><span class='message__name'>"+msg.sender+"</span><span class='message__meta'>"+msg.time+"</span></p><p><a href='"+msg.text +"'>My Current Location </a></p></div>");
+  			socket.on('recieveLocation', function({username,time,msg,room,channel}){
+  				$('#messages').append("<div class='message'><p><span class='message__name'>"+username+"</span><span class='message__meta'>"+time+"</span></p><p><a href='"+msg +"'>My Current Location </a></p></div>");
   				console.log(msg)
   			})
 
@@ -51,13 +53,19 @@
   			document.getElementById("message-form").addEventListener('submit',(e)=>{
   				e.preventDefault()
   				//console.log("Clicked")
-  				var msg= userInput.value
-  				
-  				socket.emit('send',msg,(error)=>{
+				  var msg= userInput.value
+				  var channel=channelInput.value
+				  var packet={room,channel,msg,token}
+  				console.log(packet)
+  				socket.emit('send',packet,(error)=>{
   					userInput.value=""
   					userInput.focus()
-  					if(error)
-  						return alert(error)
+					  if(error)
+					  {
+						  console.log(error)
+						return alert(error.message)
+					  }
+  						
   					console.log("message delivered")
   				})
   			})
@@ -68,28 +76,43 @@
 
   				navigator.geolocation.getCurrentPosition((position)=>{
   					console.log(position)
-  					locationButton.disabled=true
-  					socket.emit("sendLocation","https://google.com/maps?q="+position.coords.latitude+","+position.coords.longitude,(msg)=>{
+					  locationButton.disabled=true
+					var channel=channelInput.value
+					var packet={room,
+						channel:"general"
+						,token,
+						msg:"https://google.com/maps?q="+position.coords.latitude+","+position.coords.longitude}
+  					socket.emit("sendLocation",packet,(msg)=>{
   						locationButton.disabled=false;
-  						console.log(msg)
+  						console.log(packet)
   					})
   				})
   			})
-        console.log(username,room)
-        socket.emit('join',Qs.parse(location.search, { ignoreQueryPrefix: true }), (error)=>{
-            if(error)
-            {
-              alert(error)
-              location.href="/"
-            }
-        })
+		
+		//this even is sent when a user joina room 
+		//var { username ,room} =Qs.parse(location.search, { ignoreQueryPrefix: true })
+		$(document).ready(function() {
+			var currentChannel=channelInput.value
+			console.log(currentChannel)
+			socket.emit('join',{username,room, token}, (error, data)=>{
+				if(error)
+				{
+					console.log(error)
+					alert(JSON.stringify(error))
+					location.href="/"
+				}
+				else{
+					console.log(data)
+				}
+			})
+		})
     
 
         socket.on("roomData",(obj)=>{
 
           var html=""
-          obj.users.forEach((u)=>{
-            html+="<li>"+u.username+"</li>" 
+          obj.onlineUsers.forEach((u)=>{
+            html+="<li>"+u+"</li>" 
           })
           console.log(html)
           //$('.room-title').innerHTML=obj.room
