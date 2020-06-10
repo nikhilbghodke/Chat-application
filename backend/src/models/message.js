@@ -10,7 +10,7 @@ const messageSchema = new mongoose.Schema({
     channel: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Channel',
-        required:true
+        required:true,
     },
     content: {
         type:String,
@@ -24,7 +24,6 @@ const messageSchema = new mongoose.Schema({
 }, { timestamps: { createdAt: true, updatedAt: false } }); //messages cannot be updated
 
 messageSchema.statics.saveMessage= async function(userId,channelTitle,content,type){
-
     var channel=await Channel.findOne({
         title:channelTitle
     })

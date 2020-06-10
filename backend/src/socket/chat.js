@@ -1,6 +1,6 @@
 const socketio= require("socket.io")
 const Filter= require("bad-words")
-const {addUser,removeUser,getUser,getUsersInRoom}= require("./../utils/users")
+
 const utils=require("./../utils/messages.js")
 const generateMessage=utils.generateMessage
 const Channel= require("./../models/channel.js")
@@ -8,6 +8,7 @@ const Room=require("../models/room.js")
 const allowedToEnterRoom=require("../utils/allowedToEnterRoom.js")
 const User= require("../models/user.js")
 const Message= require("../models/message.js")
+const {addUser, removeUser, getUser}= require("../utils/socketManager")
 
 module.exports= function(io){
 
@@ -26,6 +27,7 @@ io.on("connection",(socket)=>{
 			return callback(error,null)
 		}
 
+		addUser(socket.user.username, socket,room)
 		//joining user o all channels present in room
         var channels=await Room.getAllChannels(room)
 		// this room is used just for sending room specific data like user going offline
@@ -64,6 +66,7 @@ io.on("connection",(socket)=>{
 	socket.on('send',async (packet,callback)=>{
 		//user token verified, check if any such room is present 
 		// and is user member of that room
+		console.log(packet)
 		try{	
 			await allowedToEnterRoom(packet.token,packet.room,socket)
 		}
@@ -72,7 +75,7 @@ io.on("connection",(socket)=>{
 			return callback(error,null)
 		}
 		//saving the message to db
-		await Message.saveMessage(socket.user._id,packet.channel,packet.msg,packet.type)
+		console.log(packet)
 		packet.username=socket.user.username
 		delete packet.token
 		const filter = new Filter()
@@ -80,8 +83,17 @@ io.on("connection",(socket)=>{
 			return callback({
 				message:"Profanity not allowed"
 			})
-		console.log(packet)
-		io.to(packet.room).emit("recieve",generateMessage(packet))
+		if(packet.channel)
+		{
+			await Message.saveMessage(socket.user._id,packet.channel,packet.msg,packet.type)
+			io.to(packet.room).emit("recieve",generateMessage(packet))
+		}
+		else{
+			getUser(packet.to, packet.room).forEach((con)=>{
+				con.emit("recieve", generateMessage(packet))
+			})
+			socket.emit('recieve',generateMessage(packet))
+		}
 		callback()
 	})
 	//update last seen of user
@@ -90,6 +102,7 @@ io.on("connection",(socket)=>{
 	//emit event regarding online users
 	socket.on('disconnect',async () => {
 		
+		removeUser(socket)
 		//finding a room which user left
 		var room = await Room.findOne({
 			'online.socketId':socket.id

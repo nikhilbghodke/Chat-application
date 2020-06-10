@@ -18,7 +18,9 @@
 				<div class="compose">
 					<form id="message-form">
 						<input type="text" placeholder="channel" value="general" id="channel">
+						<input type="text" placeholder="direct"  id="direct">
 						<input type="text" id="userInput" placeholder="message" required autocomplete="off">
+
 						<button id="send">send</button>
 					</form>
 				<button id="sendLocation">Send Location</button>
@@ -37,6 +39,7 @@
   			var userInput=document.getElementById("userInput");
 			var  locationButton=document.getElementById("sendLocation");
 			var channelInput=document.getElementById("channel")
+			var directInput= document.getElementById("direct")
 
         const { username, room , token} = Qs.parse(location.search, { ignoreQueryPrefix: true })
         $('.room-title')[0].innerHTML=room
@@ -51,8 +54,15 @@
   				//console.log("Clicked")
 				  var msg= userInput.value
 				  var channel=channelInput.value
+				  var to= directInput.value
 				  var type="text"
-				  var packet={room,channel,msg,token}
+				  var packet={}
+
+				  	packet={room,channel,msg,token}
+				//   else
+				//   	packet={room,to,msg,token}
+
+				  console.log(to)
   				console.log(packet)
   				socket.emit('send',packet,(error)=>{
   					userInput.value=""
@@ -116,6 +126,21 @@
           $('#users').empty()
           $('#users').append(html)
         })
+		function sendDirect(to,msg){
+			var packet={room,to,msg,token}
+			console.log(packet)
+			socket.emit('send',packet,function(error){
+  					
+  					
+					  if(error)
+					  {
+						  console.log(error)
+						return alert(error.message)
+					  }
+  						
+  					console.log("message delivered")
+  				})
+		}
 
 		</script>
 	</body>
