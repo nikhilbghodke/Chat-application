@@ -12,9 +12,10 @@ var storage = multer.diskStorage({
       cb(null, uploadDir)
     },
     filename: function (req, file, cb) {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)+".jpg"
-      req.name=uniqueSuffix
-      cb(null, file.fieldname + '-' + uniqueSuffix)
+        console.log(file)
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+      req.name=uniqueSuffix+file.originalname
+      cb(null,req.name)
     }
   })
   
@@ -24,6 +25,7 @@ var upload = multer({ storage: storage }).single('avatar')
 app.post('/profilePic', auth,async function (req, res) {
     upload(req, res, async function (err) {
       if (err) {
+          console.log(JSON.stringify(err))
           return res.status(500).send(err)
       }
       console.log(req.name)
@@ -36,8 +38,8 @@ app.post('/profilePic', auth,async function (req, res) {
       })
     })
   })
-app.get("/profilePic", auth, async function(req,res){
-    var img=path.join(__dirname,"../../uploads/avatar-"+req.user.avatar)
+app.get("/profilePic", auth, async function(req,res,next){
+    var img=path.join(__dirname,"../../uploads/"+req.user.avatar)
     res.sendFile(img)
 })
 

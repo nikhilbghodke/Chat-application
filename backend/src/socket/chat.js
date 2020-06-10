@@ -72,8 +72,9 @@ io.on("connection",(socket)=>{
 			return callback(error,null)
 		}
 		//saving the message to db
-		await Message.saveMessage(socket.user._id,packet.channel,packet.msg)
+		await Message.saveMessage(socket.user._id,packet.channel,packet.msg,packet.type)
 		packet.username=socket.user.username
+		delete packet.token
 		const filter = new Filter()
 		if(filter.isProfane(packet.msg))
 			return callback({
@@ -83,21 +84,6 @@ io.on("connection",(socket)=>{
 		io.to(packet.room).emit("recieve",generateMessage(packet))
 		callback()
 	})
-	socket.on('sendLocation',async (packet,callback)=>{
-		try{	
-			await allowedToEnterRoom(packet.token,packet.room,socket)
-		}
-		catch(error){
-			console.log(error.messsage)
-			return callback(error,null)
-		}
-		await Message.saveMessage(socket.user._id,packet.channel,packet.msg)
-		packet.username=socket.user.username
-		console.log(packet)
-		io.to(packet.room).emit("recieveLocation",generateMessage(packet))
-		callback(null)
-	})
-
 	//update last seen of user
 	//update online users list
 	//get latest room of online users

@@ -16,10 +16,14 @@ const messageSchema = new mongoose.Schema({
         type:String,
         required: true
     },
+    type:{
+        type:String,
+        default:"text"
+    }
 
 }, { timestamps: { createdAt: true, updatedAt: false } }); //messages cannot be updated
 
-messageSchema.statics.saveMessage= async function(userId,channelTitle,content){
+messageSchema.statics.saveMessage= async function(userId,channelTitle,content,type){
 
     var channel=await Channel.findOne({
         title:channelTitle
@@ -28,7 +32,8 @@ messageSchema.statics.saveMessage= async function(userId,channelTitle,content){
     var message= new Message({
         owner:userId,
         content,
-        channel:channel._id
+        channel:channel._id,
+        type
     })
     await message.save()
 }

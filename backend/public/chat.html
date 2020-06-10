@@ -44,10 +44,6 @@
   				$('#messages').append("<div class='message'><p><span class='message__name'>"+username+"</span><span class='message__meta'>"+time+"</span></p><p>"+channel+";- "+msg+"</p></div>");
   				console.log(channel)
   			})
-  			socket.on('recieveLocation', function({username,time,msg,room,channel}){
-  				$('#messages').append("<div class='message'><p><span class='message__name'>"+username+"</span><span class='message__meta'>"+time+"</span></p><p><a href='"+msg +"'>My Current Location </a></p></div>");
-  				console.log(msg)
-  			})
 
 
   			document.getElementById("message-form").addEventListener('submit',(e)=>{
@@ -55,6 +51,7 @@
   				//console.log("Clicked")
 				  var msg= userInput.value
 				  var channel=channelInput.value
+				  var type="text"
 				  var packet={room,channel,msg,token}
   				console.log(packet)
   				socket.emit('send',packet,(error)=>{
@@ -79,10 +76,10 @@
 					  locationButton.disabled=true
 					var channel=channelInput.value
 					var packet={room,
-						channel:"general"
-						,token,
+						channel:"general",token,
+						type:"location",
 						msg:"https://google.com/maps?q="+position.coords.latitude+","+position.coords.longitude}
-  					socket.emit("sendLocation",packet,(msg)=>{
+  					socket.emit("send",packet,(msg)=>{
   						locationButton.disabled=false;
   						console.log(packet)
   					})
