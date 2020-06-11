@@ -8,6 +8,7 @@ const Room=require("../models/room.js")
 const allowedToEnterRoom=require("../utils/allowedToEnterRoom.js")
 const User= require("../models/user.js")
 const Message= require("../models/message.js")
+const DirectMessage= require("../models/directMessages.js")
 const {addUser, removeUser, getUser}= require("../utils/socketManager")
 
 module.exports= function(io){
@@ -93,6 +94,7 @@ io.on("connection",(socket)=>{
 				con.emit("recieve", generateMessage(packet))
 			})
 			socket.emit('recieve',generateMessage(packet))
+			await DirectMessage.saveMessage(socket.user._id,packet.to,packet.room, packet.msg, packet.type)
 		}
 		callback()
 	})
@@ -110,7 +112,7 @@ io.on("connection",(socket)=>{
 		
 		//updating user last senn to current time
 		var userId= room.online.filter((val)=>{
-			console.log(val.socketId==socket.id)
+			//console.log(val.socketId==socket.id)
 			return val.socketId==socket.id
 		})[0].user
 		
