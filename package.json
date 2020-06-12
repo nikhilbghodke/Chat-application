@@ -1,0 +1,20 @@
+{
+  "name": "dbproject",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "cd backend && npm install && npm run start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nikhilbghodke/Chat-application.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nikhilbghodke/Chat-application/issues"
+  },
+  "homepage": "https://github.com/nikhilbghodke/Chat-application#readme"
+}
