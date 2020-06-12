@@ -64,7 +64,7 @@
   margin-bottom: 4rem;
 }
 
-#room-id, #email, #password, #name {
+#room-id, #email, #password, #username {
     width: 45%;
     padding: 0.5rem;
     margin: 0 auto;
