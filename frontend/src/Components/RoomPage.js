@@ -7,26 +7,26 @@ import searchIcon from "../Assests/Images/search-icon.png";
 export default function RoomPage(props) {
     return (
 <div>
-<ul class="nav ">
-  <li class="nav-item">
-    <a class="nav-link active" href="#">
+<ul className="nav ">
+  <li className="nav-item">
+    <a className="nav-link active" href="#">
        <div className="icon-section-auth">
                         <img src={Icon} alt="icon" className="icon" onClick={() => alert("ICON")} />
                     </div></a>
   </li>
   <div className="profile">
-  <li class="nav-item dropdown ">
+  <li className="nav-item dropdown ">
   
-    <a class="nav-link dropdown-toggle " data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+    <a className="nav-link dropdown-toggle " data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
     <img src={Profile} alt="icon" />
     </a>
    
-    <div class="dropdown-menu">
-      <a class="dropdown-item" href="#">Action</a>
-      <a class="dropdown-item" href="#">Another action</a>
-      <a class="dropdown-item" href="#">Something else here</a>
-      <div class="dropdown-divider"></div>
-      <a class="dropdown-item" href="#">Separated link</a>
+    <div className="dropdown-menu">
+      <a className="dropdown-item" href="#">Action</a>
+      <a className="dropdown-item" href="#">Another action</a>
+      <a className="dropdown-item" href="#">Something else here</a>
+      <div className="dropdown-divider"></div>
+      <a className="dropdown-item" href="#">Separated link</a>
     </div>
   </li>
   </div>
@@ -35,7 +35,7 @@ export default function RoomPage(props) {
 
 
         <div className="roompage">
-            <div class="verticalLine">
+            <div className="verticalLine">
                 <div className="form2">
                    
                     <div className="form">
@@ -44,22 +44,22 @@ export default function RoomPage(props) {
                         <p className="form-subtitle">
                             Open to all !!  </p>
 
-                        <nav class="navbar navbar-light bg-light justify-content-between">
-                            <a class="navbar-brand mb-0 h1">Choose your Interest :)</a>
-                            <form class="form-inline">
-                                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"></input>
-                                <button class="btn my-2 my-sm-0" type="submit">
+                        <nav className="navbar navbar-light bg-light justify-content-between">
+                            <a className="navbar-brand mb-0 h1">Choose your Interest :)</a>
+                            <form className="form-inline">
+                                <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"></input>
+                                <button className="btn my-2 my-sm-0" type="submit">
                                     <img src={searchIcon} width="45" height="40" alt="search"></img>
                                 </button>
                             </form>
                         </nav>
 
-                        <div class="list-group">
-                            <a href="#" class="list-group-item list-group-item-action rounded border border-dark">Cras justo odio </a>
-                            <a href="#" class="list-group-item list-group-item-action rounded border border-dark">Cras justo odio </a>
-                            <a href="#" class="list-group-item list-group-item-action rounded border border-dark">Cras justo odio </a>
-                            <a href="#" class="list-group-item list-group-item-action rounded border border-dark">Cras justo odio </a>
-                            <a href="#" class="list-group-item list-group-item-action rounded border border-dark">Cras justo odio </a>
+                        <div className="list-group">
+                            <a href="#" className="list-group-item list-group-item-action rounded border border-dark">Cras justo odio </a>
+                            <a href="#" className="list-group-item list-group-item-action rounded border border-dark">Cras justo odio </a>
+                            <a href="#" className="list-group-item list-group-item-action rounded border border-dark">Cras justo odio </a>
+                            <a href="#" className="list-group-item list-group-item-action rounded border border-dark">Cras justo odio </a>
+                            <a href="#" className="list-group-item list-group-item-action rounded border border-dark">Cras justo odio </a>
                         </div>
                     </div>
                 </div>
@@ -71,11 +71,11 @@ export default function RoomPage(props) {
                         Welcome !</p>
                     <p className="form-subtitle">
                         Choose a Chat Room to get Started with :) </p>
-                    <div class="list-group">
-                        <a href="#" class="list-group-item list-group-item-action rounded border border-dark">Cras justo odio </a>
-                        <a href="#" class="list-group-item list-group-item-action rounded border border-dark">Cras justo odio </a>
-                        <a href="#" class="list-group-item list-group-item-action rounded border border-dark">Cras justo odio </a>
-                        <a href="#" class="list-group-item list-group-item-action rounded border border-dark">Cras justo odio </a>
+                    <div className="list-group">
+                        <a href="#" className="list-group-item list-group-item-action rounded border border-dark">Cras justo odio </a>
+                        <a href="#" className="list-group-item list-group-item-action rounded border border-dark">Cras justo odio </a>
+                        <a href="#" className="list-group-item list-group-item-action rounded border border-dark">Cras justo odio </a>
+                        <a href="#" className="list-group-item list-group-item-action rounded border border-dark">Cras justo odio </a>
                     </div>
                     <button className="form-submit">
                         Let's go!</button>
