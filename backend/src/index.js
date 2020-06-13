@@ -17,7 +17,7 @@ const db=require("./db/mongo.js")
 const chat= require("./socket/chat.js")
 const cors = require("cors")
 const errorHandler = require("./middlewares/errorHandler");
-var port = process.env.OPENSHIFT_NODEJS_PORT || 8081
+var port = process.env.OPENSHIFT_NODEJS_PORT || 3000
 var app=express()
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 

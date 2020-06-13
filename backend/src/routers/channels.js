@@ -102,11 +102,14 @@ app.patch("/channels/:title/:name", auth, async (req, res, next) => {
 })
 
 //get all channels in room
-app.get("/allChannels/:roomid", async (req, res, next) => {
+app.get("/allChannels/:title", async (req, res, next) => {
     var roomid = req.params.roomid
     try {
+        const romm = await Room.findOne({
+            title:req.params.title
+        })
         const channels = await Channel.find({
-            room: roomid
+            room: room._id
         })
         res.send(channels)
     } catch (e) {

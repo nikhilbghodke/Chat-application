@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const { schema } = require("./message");
+const Message= require("./message.js")
 const channelSchema = new mongoose.Schema({
     room: {
         type: mongoose.Schema.Types.ObjectId,
@@ -7,7 +9,6 @@ const channelSchema = new mongoose.Schema({
     },
     title: {
         type: String,
-        unique:true,
         trim:true,
         required: true
     },
@@ -24,6 +25,18 @@ const channelSchema = new mongoose.Schema({
         default: false
     }
 }, { timestamps: true });
+channelSchema.statics.getAllMessages= async function(id){
+        const messages = await Message.find({
+            channel: id
+        })
+        for(var i=0;i<messages.length;i++)
+        {
+            var message= messages[i]
+            await message.populate('owner').execPopulate()
+
+        }
+        return messages
+}
 
 const Channel = mongoose.model('Channel', channelSchema);
 

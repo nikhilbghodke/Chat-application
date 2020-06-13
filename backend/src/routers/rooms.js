@@ -4,10 +4,11 @@ const roomowner =require("../middlewares/roomOwnerAuth.js")
 const Room= require("../models/room.js")
 const User=require("../models/user.js")
 const sendEmail=require("../utils/sendEmail.js")
+const Channel = require("../models/channel.js")
 
 const app= express.Router()
 
-app.post("/rooms", auth,async (req,res)=>{
+app.post("/rooms", auth,async (req,res,next)=>{
     try{
         var room = new Room(req.body)
         room.owner=req.user._id
@@ -17,9 +18,15 @@ app.post("/rooms", auth,async (req,res)=>{
     }
     catch(e){
         if(e.name=="MongoError")
-            return res.status(400).send(e.message)
+            return next({
+                status: 400,
+                message:Object.keys(e.keyValue)+" is already taken"
+            })
         console.log(e)
-        res.status(500).send(e.message)
+        return next({
+            status: 500,
+            message:e.message
+        })
     }
 })
 
@@ -192,6 +199,28 @@ app.delete("/deleteAll", async (req,res)=>{
     res.send("All rooms deleted")
 })
 
+
+app.get("/allMessages/:title", auth, async (req,res,next)=>{
+    try{
+    var channels=await  Room.getAllChannels(req.params.title)
+    var msg={}
+    for (var i=0; i<channels.length;i++){
+        var channel= channels[i]
+       console.log(channel._id)
+       var messages=await Channel.getAllMessages(channel._id)
+
+       console.log(messages)
+       msg[channel.title]=messages
+    }
+    res.send(msg)
+    }
+    catch(e){
+        return next({
+            status:404,
+            message:e.message
+        })
+    }
+})
 
 
 
