@@ -43,19 +43,31 @@ app.get("/profilePic", auth, async function(req,res,next){
     res.sendFile(img)
 })
 
-app.post("/signup", async (req,res)=>{
+app.post("/signup", async (req,res, next)=>{
    
     var user= new User(req.body)
     try{
         user=await user.save()
+    }
+    catch(e){
+        return next({
+            status: 400,
+            message:Object.keys(e.keyValue)+" is already taken"
+        })
+    }
+
+    try{
         const token= await user.generateToken()
         res.send({user,token})
     }
     catch(e){
-        res.status(400).send(e)
+        return next({
+            status: 500,
+            message:e
+        })
     }
 })
-app.post("/login", async (req,res)=>{
+app.post("/login", async (req,res,next)=>{
     
     try{
      const  user = await User.findByCredentials(req.body.email,req.body.password)
@@ -63,12 +75,16 @@ app.post("/login", async (req,res)=>{
      res.send({user,token})
     }
     catch(e){
-        res.status(404).send(e)
+        console.log(e)
+        return next({
+            status: 404,
+            message:e.message
+        })
     }
      
 })
 
-app.post("/logout", auth,async (req,res)=>{
+app.post("/logout", auth,async (req,res, next)=>{
 
     try{
         var token =req.token
@@ -80,12 +96,14 @@ app.post("/logout", auth,async (req,res)=>{
         res.send(user)
     }
     catch(e){
-        console.log(e)
-        res.status(500).send(e)
+        return next({
+            status: 500,
+            message:e
+        })
     }
 })
 
-app.post("/logoutAll", auth,async (req,res)=>{
+app.post("/logoutAll", auth,async (req,res,next)=>{
     try{
         var user=req.user
         user.tokens= []
@@ -93,8 +111,10 @@ app.post("/logoutAll", auth,async (req,res)=>{
         res.send(user)
     }
     catch(e){
-        console.log(e)
-        res.status(500).send(e)
+        return next({
+            status: 500,
+            message:e
+        })
     }
 })
 
@@ -103,7 +123,7 @@ app.get("/me", auth,async (req,res)=>{
     res.send(req.user)
 })
 
-app.patch("/users", auth ,async (req,res)=>{
+app.patch("/users", auth ,async (req,res,next)=>{
 
     try{
         var user =req.user
@@ -116,8 +136,10 @@ app.patch("/users", auth ,async (req,res)=>{
         res.send(user)
     }
     catch(e){
-        console.log(e)
-        res.status(500).send(e)
+        return next({
+            status: 500,
+            message:e
+        })
     }
 })
 
@@ -128,7 +150,10 @@ app.get("/users", async (req,res)=>{
         res.send(users)
     }
     catch(e){
-        res.status(500).send(e)
+        return next({
+            status: 500,
+            message:e
+        })
     }
 })
 
