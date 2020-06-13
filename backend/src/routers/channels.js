@@ -3,7 +3,6 @@ const auth = require("../middlewares/roomOwnerAuth")
 const Room = require("../models/room.js")
 const User = require("../models/user.js")
 const Channel = require("../models/channel")
-var port = process.env.PORT || 8081
 const app = express.Router({ mergeParams: true });
 
 

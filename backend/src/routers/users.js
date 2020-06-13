@@ -63,7 +63,7 @@ app.post("/signup", async (req,res, next)=>{
     catch(e){
         return next({
             status: 500,
-            message:e
+            message:e.message
         })
     }
 })
@@ -98,7 +98,7 @@ app.post("/logout", auth,async (req,res, next)=>{
     catch(e){
         return next({
             status: 500,
-            message:e
+            message:e.message
         })
     }
 })
@@ -113,14 +113,21 @@ app.post("/logoutAll", auth,async (req,res,next)=>{
     catch(e){
         return next({
             status: 500,
-            message:e
+            message:e.message
         })
     }
 })
 
 
 app.get("/me", auth,async (req,res)=>{
-    res.send(req.user)
+    try{
+        res.send(req.user)
+    }
+    catch(e){
+        return next({
+            message:e.message
+        })
+    }
 })
 
 app.patch("/users", auth ,async (req,res,next)=>{
@@ -138,13 +145,13 @@ app.patch("/users", auth ,async (req,res,next)=>{
     catch(e){
         return next({
             status: 500,
-            message:e
+            message:e.message
         })
     }
 })
 
 
-app.get("/users", async (req,res)=>{
+app.get("/users", async (req,res,next)=>{
     try{
         const users= await User.find({})
         res.send(users)
@@ -152,7 +159,7 @@ app.get("/users", async (req,res)=>{
     catch(e){
         return next({
             status: 500,
-            message:e
+            message:e.message
         })
     }
 })
