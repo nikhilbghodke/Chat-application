@@ -1,5 +1,6 @@
 const express = require("express")
 const auth = require("../middlewares/roomOwnerAuth")
+const roomOwner= require("../middlewares/roomOwnerAuth.js")
 const Room = require("../models/room.js")
 const User = require("../models/user.js")
 const Channel = require("../models/channel")
@@ -7,14 +8,16 @@ const app = express.Router({ mergeParams: true });
 
 
 //create channel sending room title to create 
-app.post("/channels/:title", auth, async (req, res, next) => {
+app.post("/channels/:title", roomOwner, async (req, res, next) => {
     try {
         var channel = new Channel(req.body)
         channel.room = req.room.id
         await channel.save()
+        console.log(channel)
         res.status(201).send(channel)
     }
     catch (e) {
+        console.log(e)
         return next({
             message: e.message
         })
@@ -102,9 +105,9 @@ app.patch("/channels/:title/:name", auth, async (req, res, next) => {
 
 //get all channels in room
 app.get("/allChannels/:title", async (req, res, next) => {
-    var roomid = req.params.roomid
+    var roomid = req.params.title
     try {
-        const romm = await Room.findOne({
+        const room = await Room.findOne({
             title:req.params.title
         })
         const channels = await Channel.find({

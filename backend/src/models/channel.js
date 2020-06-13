@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { schema } = require("./message");
+// const { schema } = require("./message");
 const Message= require("./message.js")
 const channelSchema = new mongoose.Schema({
     room: {
@@ -10,7 +10,7 @@ const channelSchema = new mongoose.Schema({
     title: {
         type: String,
         trim:true,
-        required: true
+        required: true,
     },
     description: {
         type: String
@@ -38,6 +38,6 @@ channelSchema.statics.getAllMessages= async function(id){
         return messages
 }
 
-const Channel = mongoose.model('Channel', channelSchema);
+const Channel = mongoose.model('Channel', channelSchema)
 
-module.exports=Channel;
+module.exports=Channel
