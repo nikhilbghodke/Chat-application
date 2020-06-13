@@ -30,16 +30,14 @@
     margin-bottom: -10;
   }
   
-  .form2,.form1{
-      flex:50%;
-  }
+ 
   
   .verticalLine{
       border-right: 4px solid gray;
+      margin-left: 2rem;
+      margin-right: 4rem;
   }
 
-  
-  /* Now the right side components */
   .form {
     text-align: center;
     display: flex;
@@ -81,3 +79,17 @@
         padding-right: 0rem;
     }
   }
+
+  @media (max-width: 1700px) {
+      .verticalLine{
+        border-right: 0px solid rosybrown;
+      }
+    }
+
+      
+  @media (min-width: 1900px) {
+    .verticalLine{
+      margin-right: 6rem;
+    }
+  }
+  
