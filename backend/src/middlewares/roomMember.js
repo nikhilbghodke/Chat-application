@@ -20,11 +20,6 @@ const auth= async function(req,res,next){
             status: 404,
             message: "you are not a member of Room or No room with given name exist"
         })
-        if(!room.isOwner(user))
-        return next({
-            status: 401,
-            message: "Only owner can do this!"
-        })
         
         req.room=room
         req.user=user
