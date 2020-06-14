@@ -43,9 +43,8 @@
   border-top-right-radius: 10px;
   width: 75%;
   max-height: 100%;
-  
+
   overflow-y: auto;
-  
 }
 
 .channel-list-header {
@@ -56,7 +55,7 @@
   font-size: 1.4rem;
 }
 
-.channel-list-header:hover{
+.channel-list-header:hover {
   cursor: pointer;
 }
 
@@ -67,19 +66,18 @@
   margin-bottom: 0;
   font-family: "HelveticaNeue-Medium";
   font-size: 1.2em;
-  color: #636363
+  color: #636363;
 }
 .first {
-  border-top: 0.5px solid grey
+  border-top: 0.5px solid grey;
 }
 
 .channel-list-ul:hover {
-  background-color: #C6E6EC;
+  background-color: #c6e6ec;
   cursor: pointer;
 }
 
 /* ***********CHAT-BOX*********** */
-
 
 .chat-area-border {
   border: 1px solid black;
@@ -105,13 +103,12 @@
 .chat-name {
   flex: 1;
   font-family: "HelveticaNeue-Medium";
-  font-size: 1.4rem
+  font-size: 1.4rem;
 }
 
 .chat-description {
   flex: 1;
   font-family: "HelveticaNeue-Light";
-  
 }
 
 .chat-message {
@@ -144,20 +141,29 @@
 
 .message-user {
   font-size: 0.8rem;
-  font-family: "HelveticaNeue-Light";;
-  color: rgb(238, 238, 238);
+  font-family: "HelveticaNeue-Light";
 }
+
 
 .current-user {
   border-bottom-right-radius: 0px;
+  /* background-color: ; */
+}
+.current-user .message-user {
+  color: rgb(238, 238, 238);
+}
+
+.current-user .message-content {
+  color: white;
 }
 
 .other-user {
   border-bottom-left-radius: 0px;
+  background-color: rgb(216, 216, 236);
 }
 
-.message-content {
-  color: white
+.current-user .message-area {
+  color: black;
 }
 
 .new-message {
@@ -171,7 +177,7 @@
 }
 
 .message-options {
-  flex: 0.8
+  flex: 0.8;
 }
 
 .message-text {
@@ -180,6 +186,10 @@
   min-height: 5.4rem;
   display: flex;
   align-items: center;
+}
+
+.message-time {
+  font-size: 0.8rem;
 }
 
 .message-text .MuiTextField-root {
@@ -191,7 +201,6 @@
 .message-text .MuiOutlinedInput-multiline {
   height: 4.5rem;
 }
-
 
 .send-button {
   flex: 0.7;
@@ -205,7 +214,6 @@
 /* .send-button:hover{
   cursor: pointer;
 } */
-
 
 @media (max-width: 800px) {
   .chat-area {

@@ -3,7 +3,7 @@ import TextField from '@material-ui/core/TextField';
 import MessageList from './messageList';
 import { connect } from 'react-redux';
 
-import { addNewMessage, changeSelectedChannel } from '../../../store/actions/chatActions';
+import { addNewMessage, } from '../../../store/actions/chatActions';
 
 class ChatBox extends React.Component {
     state = {
@@ -16,51 +16,32 @@ class ChatBox extends React.Component {
     }
 
     addNewMessage = () => {
-        // const room = "Discussion";
-        // const channel = props.roomDetails.channels[0].title;
-        // const token = props.token;
-        // const type="text";
-
-        // const messageObject = {
-        //     room,
-        //     channel,
-        //     type,
-        //     token,
-        //     message
-        // }
-
-        // var packet = {room, channel, message, token, type};
-
-        // console.log(props)
-
-        // this.setmessageList({ user: "User A", message: this.state.message })
         if (this.state.message.length === 0) 
             return;
         
         const message = {
-            message: this.state.message,
-            user: "User A"
+            content: this.state.message,
+            owner: {username: this.props.currentUser},
+            createdAt: new Date(Date.now()).toISOString()
         }
         let nameOfConversation = "";
+
+        // Send the message through socket
         if (this.props.currentConversation[0] === "channels") {
-            console.log("HI")
             nameOfConversation = this.props.currentConversation[1].name
+            this.props.sendMessage(this.state.message, nameOfConversation, true)
         } else {
-            nameOfConversation = this.props.currentConversation[1].otherUserName
+            nameOfConversation = this.props.currentConversation[1].name
+            this.props.sendMessage(this.state.message, nameOfConversation, false)
         }
         this.props.addNewMessage(message, this.props.currentConversation[0], nameOfConversation)
         this.setState({
             message: ""
         })
+        
     }
     render() {
         // console.log(this.props)
-
-        // const [messageList, setmessageList] = useState(props.currentChannel.messages);
-        // console.log(messageList)
-        // const [message, setMessage] = useState("");
-        // let message = "";
-
         let title = "";
         let description = null;
         let isPersonal = "";
@@ -73,7 +54,7 @@ class ChatBox extends React.Component {
             isPersonal = false;
         } else {
             conversation = this.props.currentConversation[1];
-            title = conversation.otherUserName;
+            title = conversation.name;
             isPersonal = true;
         }
 
@@ -127,7 +108,6 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         addNewMessage: (message, typeOfConversation, conversationName) => {dispatch(addNewMessage(message, typeOfConversation, conversationName))},
-        changeSelectedChannel: (channelIndex) => {dispatch(changeSelectedChannel(channelIndex))}
     }
 }
 
