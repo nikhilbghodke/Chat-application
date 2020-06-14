@@ -11,24 +11,24 @@ import TwitterIcon from '../Assests/Images/twitter.png';
 
 import './AuthenticationPage.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import { removeError } from "../store/actions/error";
 import { connect } from "react-redux";
 import { authUser } from "../store/actions/auth";
 
 function AuthenticationPage(props) {
-    const {authUser, currentUser} = props;
+    const {authUser, errors ,currentUser, removeError} = props;
 
     let component = null;   // This will be the component on the right side
     let title = "";
     let subtitle = "";  // These two will be on the left side
 
     if (props.match.params.type === "signin"){
-        component = <UserSignIn currentUser={currentUser} onAuth={authUser} {...props}/>
+        component = <UserSignIn currentUser={currentUser} onAuth={authUser} errors={errors} removeError={removeError} {...props}/>
         title = "Welcome Back!";
         subtitle = "Nice to see you again"
     }
     else if (props.match.params.type === "signup"){
-        component = <NewUser onAuth={authUser} {...props}/>
+        component = <NewUser onAuth={authUser} errors={errors} removeError={removeError}  {...props}/>
         title = "Hello there!";
         subtitle = "Get started with your team";
     }
@@ -82,8 +82,9 @@ function AuthenticationPage(props) {
 function mapStateToProps(state) {
     return {
       currentUser: state.currentUser,
+      errors: state.errors
     };
   }
 
   
-export default connect(mapStateToProps,{authUser})(AuthenticationPage)
+export default connect(mapStateToProps,{authUser,removeError})(AuthenticationPage)

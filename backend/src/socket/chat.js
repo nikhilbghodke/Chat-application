@@ -10,7 +10,7 @@ const User= require("../models/user.js")
 const Message= require("../models/message.js")
 const DirectMessage= require("../models/directMessages.js")
 const {addUser, removeUser, getUser}= require("../utils/socketManager")
-
+const saveMessage= require("../utils/saveMessage.js")
 module.exports= function(io){
 
 io.on("connection",(socket)=>{
@@ -86,7 +86,7 @@ io.on("connection",(socket)=>{
 			})
 		if(packet.channel)
 		{
-			await Message.saveMessage(socket.user._id,packet.channel,packet.msg,packet.type)
+			await saveMessage(socket.user._id,socket.room._id,packet.channel,packet.msg,packet.type)
 			io.to(packet.room).emit("recieve",generateMessage(packet))
 		}
 		else{

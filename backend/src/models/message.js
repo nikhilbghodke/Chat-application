@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Channel= require("./channel.js")
+const Channel= require("./channel")
 
 const messageSchema = new mongoose.Schema({
     owner: {
@@ -24,10 +24,11 @@ const messageSchema = new mongoose.Schema({
 }, { timestamps: { createdAt: true, updatedAt: false } }); //messages cannot be updated
 
 messageSchema.statics.saveMessage= async function(userId,channelTitle,content,type){
+    console.log(Channel)
     var channel=await Channel.findOne({
         title:channelTitle
     })
-
+    
     var message= new Message({
         owner:userId,
         content,
