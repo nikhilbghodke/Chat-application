@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { NavLink, withRouter } from 'react-router-dom'
-import { render } from '@testing-library/react';
+// import { render } from '@testing-library/react';
 import currentUser from '../../store/reducers/currentUser';
 
 class UserSignIn extends Component {
