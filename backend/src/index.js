@@ -22,6 +22,7 @@ var app=express()
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 const publicDirectoryPath= path.join(__dirname,"../public")
+const uploadDirectoryPath= path.join(__dirname,"../uploads")
 app.use(cors());
 app.use(express.json())
 app.use(userRoutes)
@@ -31,6 +32,7 @@ app.use(messageRouters)
 app.use(directMessageRouter)
 app.use(ftp)
 app.use(express.static(publicDirectoryPath))
+app.use(express.static(uploadDirectoryPath))
 
 
 app.use(function(req, res, next) {
