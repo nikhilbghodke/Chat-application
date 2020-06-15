@@ -46,6 +46,10 @@ const schema= mongoose.Schema({
     ],
     lastSeen:{
         type:Date
+    },
+    isVerified:{
+        type:Boolean,
+        default:false
     }
 },{
 	timestamps:true,

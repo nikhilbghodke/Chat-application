@@ -2,7 +2,9 @@ const path = require('path');
 const express= require("express")
 const multer= require("multer")
 const User = require("../models/user.js")
+const Verification= require("../models/emailVerification.js")
 const auth=require("../middlewares/auth.js")
+const sendVerification = require("../utils/sendEmail").sendVerification
 
 const uploadDir= path.join(__dirname,"../../uploads")
 var app=express.Router()
@@ -48,6 +50,10 @@ app.post("/signup", async (req,res, next)=>{
     var user= new User(req.body)
     try{
         user=await user.save()
+
+        await sendVerification(user.email,{
+            id:user._id
+        })
     }
     catch(e){
         return next({
@@ -170,4 +176,14 @@ app.delete("/users", async (req,res)=>{
     res.send("all users deleted")
 })
 
+app.get("/verify/:id", async (req,res)=>{
+    const id= req.params.id
+    var user= await User.findOne({
+        _id:id
+    })
+    user.isVerified=true
+    await user.save()
+    res.send("You are verified , please go to login page now")
+
+})
 module.exports=app;

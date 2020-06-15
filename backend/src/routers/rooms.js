@@ -4,7 +4,7 @@ const roomMember= require("../middlewares/roomMember.js")
 const roomowner =require("../middlewares/roomOwnerAuth.js")
 const Room= require("../models/room.js")
 const User=require("../models/user.js")
-const sendEmail=require("../utils/sendEmail.js")
+const sendEmail=require("../utils/sendEmail.js").sendInvite
 const Channel = require("../models/channel.js")
 
 const app= express.Router()
