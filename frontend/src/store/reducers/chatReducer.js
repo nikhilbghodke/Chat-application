@@ -13,12 +13,10 @@
                 * messages: All the messages in that channel
         * users     : Array of userConversation object
             userConversation Object:
-                * otherUserName: With which person currentUser has had conversations with
-                * messages: All the messages in that conversation
-        * selectedChannelIndex: The index of channel selected for chatbox
-        * selectedCoversation: The type of chat and the index of that chat which is selected
+                * name: With which person currentUser has had conversations with
+                * messages: All the messages in that conversation* selectedCoversation: The type of chat and the index of that chat which is selected
 */
-import { NEW_MESSAGE, CHANGE_SELECTED_CHANNEL, CHANGE_CONVERSATION } from "../actionTypes";
+import { NEW_MESSAGE, CHANGE_SELECTED_CHANNEL, CHANGE_CONVERSATION, INIT_CHANNELS, CHAT_LOADING_DONE, INIT_USERS_CONVO, DIRECTS_LOADING_DONE } from "../actionTypes";
 
 const dummyMessageList = [
     {
@@ -109,29 +107,13 @@ const dummyArrayOfUserConversations = [
 ]
 
 const initialState = {
-    currentUser: "User A",
-    roomName: "Room A",
-    channels: [
-        {
-            name: "Channel-1",
-            description: "Some Channel - 1",
-            messages: dummyMessageList
-        },
-        {
-            name: "Channel-2",
-            description: "Some Channel - 2",
-            messages: []
-        },
-        {
-            name: "Channel-3",
-            description: "Some Channel - 3",
-            messages: []
-        }
-    ],
-    users: dummyArrayOfUserConversations,
-    selectedChannelIndex: 0,
+    currentUser: "satvik",
+    roomName: "project",
+    channels: [],
+    users: [],
     selectedConversation: ["channels", 0],
-    // selectedCoversation: ["users", 0]    
+    isChatLoaded: false,
+    isDirectMessagesLoaded: false 
 }
 
 const chatReducer = (state = initialState, action) => {
@@ -139,7 +121,6 @@ const chatReducer = (state = initialState, action) => {
         case NEW_MESSAGE:
             if (action.typeOfConversation === "channels") {
                 const index = state.channels.findIndex(channel => channel.name === action.conversationName);
-                console.log(index)
                 let newChannels = [...state.channels];
                 let oldMessages = newChannels[index].messages;
                 newChannels[index] = { ...newChannels[index], messages: [...oldMessages, action.message] }
@@ -150,7 +131,9 @@ const chatReducer = (state = initialState, action) => {
                 }
             }
             // Else this is user conversation
-            const index = state.users.findIndex(userConversation => userConversation.otherUserName === action.conversationName);
+            const index = state.users.findIndex(userConversation => userConversation.name === action.conversationName);
+            console.log(action)
+            console.log(index)
             let newUserConversations = [...state.users];
             let oldMessages = newUserConversations[index].messages;
             newUserConversations[index] = { ...newUserConversations[index], messages: [...oldMessages, action.message] }
@@ -161,16 +144,36 @@ const chatReducer = (state = initialState, action) => {
             }
 
 
-        case CHANGE_SELECTED_CHANNEL:
-            return {
-                ...state,
-                selectedChannelIndex: action.channelIndex
-            }
-
         case CHANGE_CONVERSATION:
             return {
                 ...state,
                 selectedConversation: [action.typeOfCoversation, action.indexOfConversation]
+            }
+
+        case INIT_CHANNELS:
+            console.log(action.channels)
+            return {
+                ...state,
+                channels: action.channels
+            }
+
+        case INIT_USERS_CONVO:
+            console.log(action.userConversations)
+            return {
+                ...state,
+                users: action.userConversations
+            };
+
+        case CHAT_LOADING_DONE:
+            return {
+                ...state,
+                isChatLoaded: true
+            }
+
+        case DIRECTS_LOADING_DONE:
+            return {
+                ...state,
+                isDirectMessagesLoaded: true
             }
 
         default:

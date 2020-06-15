@@ -6,12 +6,13 @@ import SideBar from './sideTabBar';
 import Dashboard from './Sub-Components/dashboard';
 import People from './Sub-Components/people';
 import Chats from './Sub-Components/chats';
+import LoadingOverlay from 'react-loading-overlay';
 
 import './mainChatWindow.css';
 
 class MainChatWindow extends React.Component {
     state = {
-        selected: "chats"  // Sidebar component clicked and selected
+        selected: "chats",  // Sidebar component clicked and selected
     }
 
     updatedSelected = (newChoice) => {
@@ -29,13 +30,20 @@ class MainChatWindow extends React.Component {
     }
 
     render() {
+        console.log(this.props)
         return (
             <div className="outer-layout">
                 <Header roomName={this.props.roomName} currentUser={this.props.currentUser}/>
-                <div className="sub-window">
-                    <SideBar updatedSelected={this.updatedSelected} current={this.state.selected}/>
-                    {this.renderContent()}
-                </div>
+                <LoadingOverlay
+                    active={!this.props.isChatLoaded}
+                    spinner
+                    text="Please wait while we load your chats..."
+                >
+                    <div className="sub-window">
+                        <SideBar updatedSelected={this.updatedSelected} current={this.state.selected}/>
+                        {this.renderContent()}
+                    </div>
+                </LoadingOverlay>
             </div>
         )
     }
@@ -43,6 +51,7 @@ class MainChatWindow extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
+        isChatLoaded: state.chatReducer.isChatLoaded,
         roomName: state.chatReducer.roomName,
         currentUser: state.chatReducer.currentUser
     }

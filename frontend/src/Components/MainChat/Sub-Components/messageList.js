@@ -21,20 +21,33 @@ class MessageList extends React.Component {
     }
 
     render() {
-        
+        // console.log(this.props)
         return (
             <Scrollbars autoHide ref="messageScrollbar">
                 {this.props.messageList.map((message, index) => {
+                    let date = new Date(message.createdAt);
+                    const time = date.toTimeString().split(" ")[0];
+                    let messageObject = {
+                        content: message.content,
+                        owner: "unknown"
+                    }
+                    if (message.owner){
+                        messageObject.owner = message.owner.username
+                    }
+
                     return (
 
                         <div className="message" key={index}>
-                            {message.user === this.props.currentUser ? <div className="spacer"></div> : null}
-                            <div className={"message-area" + (message.user === this.props.currentUser ? " current-user" : " other-user")}>
+                            {messageObject.owner === this.props.currentUser ? <div className="spacer"></div> : null}
+                            <div className={"message-area" + (messageObject.owner === this.props.currentUser ? " current-user" : " other-user")}>
                                 <div className="message-user">
-                                    {message.user}
+                                    {messageObject.owner}
                                 </div>
                                 <div className="message-content">
-                                    {message.message}
+                                    {messageObject.content}
+                                </div>
+                                <div className="message-time">
+                                    {time}
                                 </div>
                             </div>
                         </div>

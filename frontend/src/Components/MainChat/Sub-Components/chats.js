@@ -6,20 +6,27 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import { Scrollbars } from 'react-custom-scrollbars';
 import openSocket from 'socket.io-client';
 import { connect } from 'react-redux'
-import { changeSelectedChannel, changeCoversation } from '../../../store/actions/chatActions';
+import LoadingOverlay from 'react-loading-overlay';
+
+import { changeCoversation, getAllChannelMessages, addNewMessage, getAllDirectMessages, directMessagesLoadingCompleted } from '../../../store/actions/chatActions';
+import { apiCall, serverBaseURL } from '../../../services/api'
+
 import ChatBox from './chatBox';
 
 import './chats.css';
 
-// const socket = openSocket('http://localhost:3001');
-const username = "abcd";
-const room = "Discussion"
-const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlZGI1MjdlNzdkNmRkMTNjNDAzOWZhNiIsImlhdCI6MTU5MTQzMTgwN30.pl0bRPyjpmzRwPmN5JHwyPQHscnyei5_qXj6hQTgnMg";
+
+const username = "satvk";
+const room = "project"
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlZTM2M2QxZWFmMTEwMTkwMDU3ZTgwMiIsImlhdCI6MTU5MjA1MjM1NH0.Euhpeqz_7ydtxAKMf4uC2VdVlW_zyhWHdRiD4ZqCWjU";
 
 // var roomDetails = null;
 
 
 class Chats extends React.Component {
+    socket = openSocket(serverBaseURL);
+    room = this.props.roomName
+
     state = {
         channelCollapse: false,
         messageCollpase: false,
@@ -27,21 +34,61 @@ class Chats extends React.Component {
     }
 
     componentDidMount() {
-        // console.log("SOCKET")
+        // Retireve all channel messages from Database
+        this.props.getAllChannelMessages(this.room, token)
 
-        // socket.emit('join', { username, room, token }, (error, data) => {
-        //     if (error) {
-        //         console.log(error)
-        //         alert(JSON.stringify(error))
-        //         // location.href="/"
-        //     }
-        //     else {
-        //         console.log(data)
-        //         this.setState({
-        //             roomDetails: data
-        //         })
-        //     }
-        // })
+        // Retrieve all direct messages
+        this.props.getAllDirectMessages(this.room, token)
+
+        // This will initialize the socket
+        this.socket.emit('join', { username, room: this.room, token }, (error, data) => {
+            if (error) {
+                console.log(error)
+                alert(JSON.stringify(error))
+                // location.href="/"
+            }
+            else {
+                console.log(data)
+                this.setState({
+                    roomDetails: data
+                })
+            }
+        })
+
+        // New message event listener
+        this.socket.on('recieve', ({ username, msg, room, channel, to, time }) => {
+            console.log({ username, msg, room, channel, time })
+            if (room === this.room && username !== this.props.currentUser) {
+                const messageObject = {
+                    content: msg,
+                    owner: { username },
+                    createdAt: time
+                }
+                console.log(messageObject)
+                if (channel)    // Message is from a channel
+                    this.props.addNewMessage(messageObject, "channels", channel)
+                else if (to) {    // Message is from a user
+
+                    // If to is currentUser: it should go to the conversation of the message owner
+                    /**
+                     * Ex: A -> B
+                     * owner: A
+                     * to: B
+                     * If A is current user: msg should be listed in convo named B
+                     * If B is current user: msg should be listed in convo named A
+                     */
+                    if (to === this.props.currentUser) {
+                        to = messageObject.owner.username
+                    }
+                    this.props.addNewMessage(messageObject, "users", to)
+                }
+            }
+
+        })
+
+
+
+        // List animation
         setTimeout(() => {
             this.setState({
                 channelCollapse: true,
@@ -49,6 +96,30 @@ class Chats extends React.Component {
             })
         },
             500)
+    }
+
+    sendMessage = (newMessage, conversation, channel = true) => {
+        // Send message to socket and to the REDUX store
+
+        let packet = {
+            room: this.room,
+            msg: newMessage,
+            token: token
+        }
+        if (channel)
+            packet.channel = conversation
+        else
+            packet.to = conversation
+
+        console.log(packet)
+
+        this.socket.emit('send', packet, (error) => {
+            if (error) {
+                console.log(error)
+                return alert(error.message);
+            }
+            console.log("Message Sent")
+        })
     }
 
     listElement = (listToMap, isChannel = true) => {
@@ -65,7 +136,7 @@ class Chats extends React.Component {
                                 this.props.changeConversation(isChannel ? "channels" : "users", index)
                             }}
                         >
-                            <div>{isChannel ? entity.name : entity.otherUserName}</div>
+                            <div>{entity.name}</div>
                         </ul>
                     )
                 })}
@@ -74,7 +145,7 @@ class Chats extends React.Component {
     }
 
     render() {
-        console.log(this.props)
+        // console.log(this.props)
         return (
             <div className="main-area chat-area">
                 <div className="chat-list">
@@ -90,49 +161,69 @@ class Chats extends React.Component {
 
                             <Collapse in={this.state.channelCollapse} timeout="auto" unmountOnExit>
                                 <div>
-                                    {this.listElement(this.props.channels)}
+                                    {this.props.isChatLoaded ? this.listElement(this.props.channels) : null}
                                 </div>
                             </Collapse>
                             <div className="channel-list-header" onClick={() => this.setState({ messageCollpase: !this.state.messageCollpase })}>
                                 Direct Messages
                             {this.state.messageCollpase ? <ExpandLess /> : <ExpandMore />}
                             </div>
+                            <LoadingOverlay
+                                active={!this.props.isDirectMessagesLoaded && this.props.isChatLoaded}
+                                spinner
+                                text="Loading"
+                            >
+                                <Collapse in={this.state.messageCollpase} timeout="auto" unmountOnExit>
+                                    <div>
+                                        {this.props.isDirectMessagesLoaded ? this.listElement(this.props.users, false) : null}
+                                    </div>
+                                </Collapse>
+                            </LoadingOverlay>
 
-                            <Collapse in={this.state.messageCollpase} timeout="auto" unmountOnExit>
-                                <div>
-                                    {this.listElement(this.props.users, false)}
-                                </div>
-                            </Collapse>
                         </Scrollbars>
                     </div>
                 </div>
                 <div className="chat-box">
-                    <ChatBox currentConversation={
-                        // ["type", conversation]
-                        this.props.selectedConversation[0] === "channels"
-                        ? 
-                        [this.props.selectedConversation[0], this.props.channels[this.props.selectedConversation[1]]]
-                        :
-                        [this.props.selectedConversation[0], this.props.users[this.props.selectedConversation[1]]]
-                    } />
+                    {this.props.isChatLoaded
+                        ?
+                        <ChatBox
+                            currentConversation={
+                                // ["type", conversation]
+                                this.props.selectedConversation[0] === "channels"
+                                    ?
+                                    [this.props.selectedConversation[0], this.props.channels[this.props.selectedConversation[1]]]
+                                    :
+                                    [this.props.selectedConversation[0], this.props.users[this.props.selectedConversation[1]]]
+                            }
+                            sendMessage={this.sendMessage}
+                        />
+                        : null}
                 </div>
+
             </div>
         )
     }
 }
 const mapStateToProps = (state) => {
     return {
+        currentUser: state.chatReducer.currentUser,
+        roomName: state.chatReducer.roomName,
         channels: state.chatReducer.channels,
         users: state.chatReducer.users,
         selectedChannelIndex: state.chatReducer.selectedChannelIndex,
         selectedConversation: state.chatReducer.selectedConversation,
+        isChatLoaded: state.chatReducer.isChatLoaded,
+        isDirectMessagesLoaded: state.chatReducer.isDirectMessagesLoaded
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        changeSelectedChannel: (channelIndex) => { dispatch(changeSelectedChannel(channelIndex)) },
-        changeConversation: (typeOfConversation, indexOfConversation) => { dispatch(changeCoversation(typeOfConversation, indexOfConversation)) }
+        addNewMessage: (message, typeOfConversation, conversationName) => { dispatch(addNewMessage(message, typeOfConversation, conversationName)) },
+        changeConversation: (typeOfConversation, indexOfConversation) => { dispatch(changeCoversation(typeOfConversation, indexOfConversation)) },
+        getAllChannelMessages: (roomName, token) => { dispatch(getAllChannelMessages(roomName, token)) },
+        getAllDirectMessages: (roomName, token) => { dispatch(getAllDirectMessages(roomName, token)) },
+        directMessagesLoadingCompleted: () => { dispatch(directMessagesLoadingCompleted()) }
     }
 }
 

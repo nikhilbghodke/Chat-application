@@ -1,8 +1,10 @@
 import { apiCall, setTokenHeader } from "../../services/api";
 import { SET_CURRENT_USER } from "../actionTypes";
 import { addError, removeError } from "./error";
+import { serverBaseURL } from '../../services/api'
 
 export function setCurrentUser(user) {
+  console.log("Set current user")
   return {
     type: SET_CURRENT_USER,
     user
@@ -26,7 +28,7 @@ export function authUser(type, userData) {
   return dispatch => {
     // wrap our thunk in a promise so we can wait for the API call
     return new Promise((resolve, reject) => {
-      return apiCall("post", `http://localhost:8081/${type}`, userData)
+      return apiCall("post", `${serverBaseURL}/${type}`, userData)
         .then(({ token, ...user }) => {
           localStorage.setItem("jwtToken", token);
           setAuthorizationToken(token);
