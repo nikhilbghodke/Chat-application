@@ -43,9 +43,9 @@
 
         const { username, room , token} = Qs.parse(location.search, { ignoreQueryPrefix: true })
         $('.room-title')[0].innerHTML=room
-  			socket.on('recieve', function({username,msg,room,channel,time}){
+  			socket.on('recieve', function({username,msg,room,channel,time,id}){
   				$('#messages').append("<div class='message'><p><span class='message__name'>"+username+"</span><span class='message__meta'>"+time+"</span></p><p>"+channel+";- "+msg+"</p></div>");
-  				console.log(channel)
+  				console.log(id)
   			})
 
 

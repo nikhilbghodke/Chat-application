@@ -1,5 +1,6 @@
 const express = require("express")
 const auth = require("../middlewares/auth.js")
+const roomMember= require("../middlewares/roomMember.js")
 const Message = require("../models/message")
 const User = require("../models/user.js")
 const Channel = require("../models/channel")
@@ -105,5 +106,26 @@ app.delete("/messages/:id", auth, async (req, res,next) => {
     }
 })
 
-
+app.post("/room/:title/report/:id", roomMember, async (req,res, next)=>{
+try {
+    var msg = await Message.findOne({
+        _id:req.params.id
+    })
+    //console.log(msg)
+    if(msg.reports.includes(req.user._id))
+        return next({
+            status:400,
+            message:"You have already reported this message"
+        })
+    msg.reports.push(req.user._id)
+    if(msg.reports.length>5)
+        msg.isReported=true
+    await msg.save()
+    res.send(msg)
+} catch (error) {
+    next({
+        message:error.message
+    })
+}
+})
 module.exports = app

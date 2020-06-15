@@ -13,7 +13,8 @@ saveMessage= async function(userId,roomId,channelTitle,content,type){
         channel:channel._id,
         type
     })
-    await message.save()
+    var msg=await message.save()
+    return msg
 }
 
 module.exports=saveMessage

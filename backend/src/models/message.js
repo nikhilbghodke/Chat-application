@@ -19,6 +19,16 @@ const messageSchema = new mongoose.Schema({
     type:{
         type:String,
         default:"text"
+    },
+    reports:[
+        {
+            type:mongoose.Schema.Types.ObjectId,
+            ref:'User'
+        }
+    ],
+    isReported:{
+        type:Boolean,
+        default:false
     }
 
 }, { timestamps: { createdAt: true, updatedAt: false } }); //messages cannot be updated

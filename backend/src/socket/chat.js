@@ -86,7 +86,8 @@ io.on("connection",(socket)=>{
 			})
 		if(packet.channel)
 		{
-			await saveMessage(socket.user._id,socket.room._id,packet.channel,packet.msg,packet.type)
+			var msg=await saveMessage(socket.user._id,socket.room._id,packet.channel,packet.msg,packet.type)
+			packet.id=msg._id
 			io.to(packet.room).emit("recieve",generateMessage(packet))
 		}
 		else{

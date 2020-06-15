@@ -274,8 +274,7 @@ app.get("/allMessages/:title", roomMember, async (req,res,next)=>{
     for (var i=0; i<channels.length;i++){
         var channel= channels[i]
        console.log(channel._id)
-       var messages=await Channel.getAllMessages(channel._id)
-
+       var messages=await Channel.getAllMessages(channel._id,req.user)
        console.log(messages)
        msg[channel.title]=messages
     }
