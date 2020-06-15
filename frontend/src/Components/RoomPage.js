@@ -13,6 +13,9 @@ import searchIcon from "../Assests/Images/search-icon.png";
 import './RoomPage.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { setTokenHeader } from '../services/api';
+import { Link } from 'react-router-dom';
+
+import {logout} from '../store/actions/auth'
 
 class RoomPage extends React.Component {
 
@@ -56,40 +59,29 @@ class RoomPage extends React.Component {
         }
     }
 
+    logout = e => {
+        e.preventDefault();
+        this.props.logout();
+      };
 
     render() {
-
         console.log(this.props)
-
         return (
             <LoadingOverlay
                 active={!this.props.isRoomLoaded}
                 spinner
                 text="Retrieving the rooms that you are in..."
             >
-                <ul className="nav ">
+                <ul className="nav">
                     <li className="nav-item">
                         <a className="nav-link active" href="#">
                             <div className="icon-section-auth">
                                 <img src={Icon} alt="icon" className="icon" onClick={() => alert("ICON")} />
                             </div></a>
                     </li>
-                    <div className="profile">
-                        <li className="nav-item dropdown ">
-
-                            <a className="nav-link dropdown-toggle " data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-                                <img src={Profile} alt="icon" />
-                            </a>
-
-                            <div className="dropdown-menu">
-                                <a className="dropdown-item" href="#">Action</a>
-                                <a className="dropdown-item" href="#">Another action</a>
-                                <a className="dropdown-item" href="#">Something else here</a>
-                                <div className="dropdown-divider"></div>
-                                <a className="dropdown-item" href="#">Separated link</a>
-                            </div>
-                        </li>
-                    </div>
+                   <li className="navbar-brand">
+                       <Link to="/authenticate/signin" onCLick={this.logout}>Logout</Link>
+                   </li>
                 </ul>
 
                 <div className="roompage">

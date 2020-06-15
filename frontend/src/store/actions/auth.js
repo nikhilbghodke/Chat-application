@@ -47,7 +47,7 @@ export function authUser(type, userData) {
         .then(({ token, ...user }) => {
           localStorage.setItem("jwtToken", token);
           setAuthorizationToken(token);
-          dispatch(setCurrentUser(user.user));
+          dispatch(setCurrentUser(user));
           dispatch(removeError());
           resolve(); // indicate that the API call succeeded
         })
@@ -55,6 +55,25 @@ export function authUser(type, userData) {
           dispatch(addError(err.message));
           reject(); // indicate the API call failed
         });
+    });
+  };
+}
+export function updateUser(userData) {
+  console.log('uu')
+  return dispatch => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        console.log("then");
+        const { token, ...user } = await apiCall("patch", `${serverBaseURL}/users`, userData);
+        dispatch(setCurrentUser(user));
+        dispatch(removeError());
+        resolve();
+      }
+      catch (err) {
+        console.log(err);
+        dispatch(addError(err.message));
+        reject();
+      }
     });
   };
 }
@@ -76,6 +95,8 @@ export function getCurrentUser() {
     })
   }
 }
+
+
 
 export function getAllRoomsOfUser() {
   return dispatch => {
