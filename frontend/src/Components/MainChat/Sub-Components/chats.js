@@ -7,6 +7,7 @@ import { Scrollbars } from 'react-custom-scrollbars';
 import openSocket from 'socket.io-client';
 import { connect } from 'react-redux'
 import LoadingOverlay from 'react-loading-overlay';
+import { withRouter } from 'react-router-dom'
 
 import { changeCoversation, getAllChannelMessages, addNewMessage, getAllDirectMessages, directMessagesLoadingCompleted } from '../../../store/actions/chatActions';
 import { apiCall, serverBaseURL } from '../../../services/api'
@@ -16,16 +17,14 @@ import ChatBox from './chatBox';
 import './chats.css';
 
 
-const username = "satvk";
-const room = "project"
-const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlZTM2M2QxZWFmMTEwMTkwMDU3ZTgwMiIsImlhdCI6MTU5MjA1MjM1NH0.Euhpeqz_7ydtxAKMf4uC2VdVlW_zyhWHdRiD4ZqCWjU";
-
 // var roomDetails = null;
 
 
 class Chats extends React.Component {
     socket = openSocket(serverBaseURL);
     room = this.props.roomName
+
+    token = localStorage.jwtToken;
 
     state = {
         channelCollapse: false,
@@ -34,14 +33,25 @@ class Chats extends React.Component {
     }
 
     componentDidMount() {
+
+        if (this.props.roomName === ""){
+            // No room is selected
+            this.props.history.push("/rooms")
+            return
+        }
+        if (!localStorage.jwtToken){
+            this.props.history.push('/authenticate/signin')
+            return
+        }
+
         // Retireve all channel messages from Database
-        this.props.getAllChannelMessages(this.room, token)
+        this.props.getAllChannelMessages(this.room)
 
         // Retrieve all direct messages
-        this.props.getAllDirectMessages(this.room, token)
+        this.props.getAllDirectMessages(this.room)
 
         // This will initialize the socket
-        this.socket.emit('join', { username, room: this.room, token }, (error, data) => {
+        this.socket.emit('join', { username: this.props.username, room: this.room, token: this.token }, (error, data) => {
             if (error) {
                 console.log(error)
                 alert(JSON.stringify(error))
@@ -104,7 +114,7 @@ class Chats extends React.Component {
         let packet = {
             room: this.room,
             msg: newMessage,
-            token: token
+            token: this.token
         }
         if (channel)
             packet.channel = conversation
@@ -146,6 +156,7 @@ class Chats extends React.Component {
 
     render() {
         // console.log(this.props)
+        // return (<h1>HELLO</h1>)
         return (
             <div className="main-area chat-area">
                 <div className="chat-list">
@@ -206,7 +217,7 @@ class Chats extends React.Component {
 }
 const mapStateToProps = (state) => {
     return {
-        currentUser: state.chatReducer.currentUser,
+        currentUser: state.currentUser.user.username,
         roomName: state.chatReducer.roomName,
         channels: state.chatReducer.channels,
         users: state.chatReducer.users,
@@ -227,4 +238,4 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Chats);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Chats));

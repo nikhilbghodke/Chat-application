@@ -22,7 +22,8 @@ class UserSignIn extends Component {
                     this.props.history.push("/rooms");
                 }
             })
-            .catch(() => {
+            .catch((error) => {
+                alert(error);
                 return;
             });
     };

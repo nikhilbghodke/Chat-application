@@ -1,6 +1,8 @@
 export const ADD_ERROR = "ADD_ERROR";
 export const REMOVE_ERROR = "REMOVE_ERROR";
 export const SET_CURRENT_USER = "SET_CURRENT_USER";
+export const SET_ALL_ROOMS = "SET_ALL_ROOMS";
+export const ROOM_LOADING_COMPLETE = "ROOM_LOADING_COMPLETE";
 
 /* *****Chat Actions***** */
 export const NEW_MESSAGE = "NEW_MESSAGE";
@@ -10,3 +12,6 @@ export const INIT_CHANNELS = "INIT_CHANNELS";
 export const INIT_USERS_CONVO = "INIT_USERS_CONVO";
 export const CHAT_LOADING_DONE = "CHAT_LOADING_DONE";
 export const DIRECTS_LOADING_DONE = "DIRECTS_LOADING_DONE";
+export const INIT_ROOM = "INIT_ROOM";
+export const INIT_PUBLIC_ROOMS = "INIT_PUBLIC_ROOMS";
+export const PUBLIC_ROOMS_LOADED = "PUBLIC_ROOMS_LOADED";

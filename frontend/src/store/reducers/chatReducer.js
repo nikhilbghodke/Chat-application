@@ -16,104 +16,24 @@
                 * name: With which person currentUser has had conversations with
                 * messages: All the messages in that conversation* selectedCoversation: The type of chat and the index of that chat which is selected
 */
-import { NEW_MESSAGE, CHANGE_SELECTED_CHANNEL, CHANGE_CONVERSATION, INIT_CHANNELS, CHAT_LOADING_DONE, INIT_USERS_CONVO, DIRECTS_LOADING_DONE } from "../actionTypes";
-
-const dummyMessageList = [
-    {
-        user: "User A",
-        message: "Incididunt aliquip officia commodo elit ullamco ad id ad reprehenderit."
-    },
-    {
-        user: "User B",
-        message: "Cupidatat laboris incididunt magna aliquip incididunt aliquip est elit."
-    },
-    {
-        user: "User C",
-        message: "Cupidatat do quis velit laboris incididunt elit irure."
-    },
-    {
-        user: "User A",
-        message: "Incididunt aliquip officia commodo elit ullamco ad id ad reprehenderit."
-    },
-    {
-        user: "User B",
-        message: "Cupidatat laboris incididunt magna aliquip incididunt aliquip est elit."
-    },
-    {
-        user: "User C",
-        message: "Cupidatat do quis velit laboris incididunt elit irure."
-    },
-    {
-        user: "User A",
-        message: "Incididunt aliquip officia commodo elit ullamco ad id ad reprehenderit."
-    },
-    {
-        user: "User B",
-        message: "Cupidatat laboris incididunt magna aliquip incididunt aliquip est elit."
-    },
-    {
-        user: "User C",
-        message: "Cupidatat do quis velit laboris incididunt elit irure."
-    },
-    {
-        user: "User A",
-        message: "Incididunt aliquip officia commodo elit ullamco ad id ad reprehenderit."
-    },
-    {
-        user: "User B",
-        message: "Cupidatat laboris incididunt magna aliquip incididunt aliquip est elit."
-    },
-    {
-        user: "User C",
-        message: "Cupidatat do quis velit laboris incididunt elit irure."
-    },
-]
-
-const dummyArrayOfUserConversations = [
-    {
-        otherUserName: "User B",
-        messages: [
-            {
-                user: "User A",
-                message: "Incididunt aliquip officia commodo elit ullamco ad id ad reprehenderit."
-            },
-            {
-                user: "User B",
-                message: "Cupidatat laboris incididunt magna aliquip incididunt aliquip est elit."
-            },
-            {
-                user: "User B",
-                message: "Lorem Lorem ad laboris pariatur mollit commodo nisi exercitation id aliqua consectetur Lorem qui laborum."
-            },
-        ]
-    },
-    {
-        otherUserName: "User C",
-        messages: [
-            {
-                user: "User C",
-                message: "Eiusmod esse pariatur adipisicing amet Lorem pariatur exercitation dolore."
-            },
-            {
-                user: "User A",
-                message: "Amet veniam tempor officia sit adipisicing cillum adipisicing dolore adipisicing ullamco cillum aute."
-            },
-            {
-                user: "User C",
-                message: "Quis labore minim veniam ipsum duis nulla magna aliqua laborum."
-            },
-        ]
-    },
-]
+import {
+    NEW_MESSAGE,
+    CHANGE_SELECTED_CHANNEL,
+    CHANGE_CONVERSATION, INIT_CHANNELS,
+    CHAT_LOADING_DONE,
+    INIT_USERS_CONVO,
+    DIRECTS_LOADING_DONE,
+    INIT_ROOM
+} from "../actionTypes";
 
 const initialState = {
-    currentUser: "satvik",
-    roomName: "project",
+    currentUser: "",
+    roomName: "",
     channels: [],
     users: [],
     selectedConversation: ["channels", 0],
     isChatLoaded: false,
-    isDirectMessagesLoaded: false 
+    isDirectMessagesLoaded: false
 }
 
 const chatReducer = (state = initialState, action) => {
@@ -124,7 +44,7 @@ const chatReducer = (state = initialState, action) => {
                 let newChannels = [...state.channels];
                 let oldMessages = newChannels[index].messages;
                 newChannels[index] = { ...newChannels[index], messages: [...oldMessages, action.message] }
-    
+
                 return {
                     ...state,
                     channels: newChannels
@@ -174,6 +94,16 @@ const chatReducer = (state = initialState, action) => {
             return {
                 ...state,
                 isDirectMessagesLoaded: true
+            }
+
+        case INIT_ROOM:
+            return {
+                ...state,
+                roomName: action.roomName,
+                channels: [],
+                users: [],
+                isChatLoaded: false,
+                isDirectMessagesLoaded: false
             }
 
         default:
