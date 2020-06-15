@@ -3,7 +3,6 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { Provider } from "react-redux";
 import { configureStore } from "../src/store";
 import { setAuthorizationToken, setCurrentUser } from "../src/store/actions/auth";
-import jwtDecode from "jwt-decode";
 import Welcome from './Components/Welcome'
 import NotFound from './Components/404Error'
 import AuthenticationPage from './Components/AuthenticationPage'
@@ -13,35 +12,29 @@ import './App.css';
 
 const store = configureStore();
 
-if (localStorage.jwtToken) {
-  setAuthorizationToken(localStorage.jwtToken);
-  // prevent someone from manually tampering with the key of jwtToken in localStorage
-  try {
-    console.log("APP")
-    console.log(jwtDecode(localStorage.jwtToken))
-    store.dispatch(setCurrentUser(jwtDecode(localStorage.jwtToken)));
-  } catch (e) {
-    console.log(e)
-    store.dispatch(setCurrentUser({}));
-  }
-}
-
 function App() {
-  return (
-    <Provider store={store}>
-    <BrowserRouter>
-      <div className="App">
-        <Switch>
-          <Route path="/" exact strict component={Welcome}/>
-          <Route path="/authenticate/:type" exact strict component={AuthenticationPage}/>
-          <Route path="/chat" exact strict component={MainChatWindow} />
-          <Route path="/rooms" exact strict component ={RoomPage}/>
-          <Route component={NotFound}/>
-        </Switch>
-      </div>
-    </BrowserRouter>
-    </Provider>
-  );
+  if (localStorage.jwtToken) {
+    setAuthorizationToken(localStorage.jwtToken);
+  }
+
+  // Check if the user data is loaded
+  if (store.getState().currentUser.user)
+
+    return (
+      <Provider store={store}>
+        <BrowserRouter>
+          <div className="App">
+            <Switch>
+              <Route path="/" exact strict component={Welcome} />
+              <Route path="/authenticate/:type" exact strict component={AuthenticationPage} />
+              <Route path="/chat" exact strict component={MainChatWindow} />
+              <Route path="/rooms" exact strict component={RoomPage} />
+              <Route component={NotFound} />
+            </Switch>
+          </div>
+        </BrowserRouter>
+      </Provider>
+    );
 }
 
 export default App;

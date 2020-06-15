@@ -101,7 +101,7 @@ class ChatBox extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-        currentUser: state.chatReducer.currentUser
+        currentUser: state.currentUser.user.username
     }
 }
 
