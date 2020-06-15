@@ -51,9 +51,9 @@ app.post("/signup", async (req,res, next)=>{
     try{
         user=await user.save()
 
-        await sendVerification(user.email,{
-            id:user._id
-        })
+        // await sendVerification(user.email,{
+        //     id:user._id
+        // })
     }
     catch(e){
         return next({
