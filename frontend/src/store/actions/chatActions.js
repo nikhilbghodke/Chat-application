@@ -1,5 +1,13 @@
-import { NEW_MESSAGE, CHANGE_CONVERSATION, INIT_CHANNELS, CHAT_LOADING_DONE, INIT_USERS_CONVO, DIRECTS_LOADING_DONE } from '../actionTypes';
-import { serverBaseURL,apiCall, setTokenHeader } from '../../services/api'
+import {
+    NEW_MESSAGE,
+    CHANGE_CONVERSATION,
+    INIT_CHANNELS,
+    CHAT_LOADING_DONE,
+    INIT_USERS_CONVO,
+    DIRECTS_LOADING_DONE,
+    INIT_ROOM
+} from '../actionTypes';
+import { serverBaseURL, apiCall, setTokenHeader } from '../../services/api'
 import { addError } from "./error";
 
 export function addNewMessage(message, typeOfConversation, conversationName) {
@@ -45,6 +53,13 @@ export function directMessagesLoadingCompleted() {
     }
 }
 
+export function initRoom(roomName) {
+    return {
+        type: INIT_ROOM,
+        roomName
+    }
+}
+
 /* *************************** */
 
 
@@ -54,15 +69,14 @@ export function setAuthorizationToken(token) {
 
 // API functions:
 
-export function getAllChannelMessages(roomName, token) {
+export function getAllChannelMessages(roomName) {
     return dispatch => {
-        setAuthorizationToken(token)
         return new Promise((resolve, reject) => {
             return apiCall("GET", serverBaseURL + `/allMessages/${roomName}`)
                 .then((channels) => {
                     console.log(channels)
                     let listOfChannels = [];
-                    for (var channel in channels){
+                    for (var channel in channels) {
                         let channelObject = {
                             name: channel,
                             messages: channels[channel]
@@ -82,15 +96,14 @@ export function getAllChannelMessages(roomName, token) {
     }
 }
 
-export function getAllDirectMessages(roomName, token) {
+export function getAllDirectMessages(roomName) {
     return dispatch => {
-        setAuthorizationToken(token)
         return new Promise((resolve, reject) => {
             return apiCall("GET", serverBaseURL + `/allDirectMessages/${roomName}`)
                 .then((userConversations) => {
                     console.log(userConversations)
                     let listOfUsers = [];
-                    for (var user in userConversations){
+                    for (var user in userConversations) {
                         let userObject = {
                             name: user,
                             messages: userConversations[user]
