@@ -28,9 +28,20 @@ app.get("/allDirectMessages/:title", roomMember, async (req,res)=>{
                 owner:req.user._id
             }]
         })
-        for(var j=0;j<m.length;j++)
+        var edited=[]
+        for(var j=0;j<m.length;j++){
             await m[j].populate('owner').populate('to').execPopulate()
-        msgs[member.username]=m
+            edited.push({
+                _id:m[j]._id,
+                content:m[j].content,
+                type:m[j].type,
+                owner:m[j].owner.username,
+                to:m[j].to.username,
+                createdAt:m[j].createdAt
+            })
+        }
+            
+        msgs[member.username]=edited
     }
     res.send(msgs)
 })
