@@ -37,6 +37,12 @@ const schema= mongoose.Schema({
             ref:'User'
         }
     ],
+    moderators:[
+        {
+            type:mongoose.Schema.Types.ObjectId,
+            ref:'User'
+        }
+    ],
     online:[
         {
             socketId:{

@@ -112,6 +112,13 @@ try {
         _id:req.params.id
     })
     //console.log(msg)
+    if(req.room.moderators.includes(req.user._id))
+    {
+        msg.isReported=true
+        await msg.save()
+        res.send(msg)
+        return
+    }
     if(msg.reports.includes(req.user._id))
         return next({
             status:400,

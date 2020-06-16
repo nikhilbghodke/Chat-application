@@ -203,7 +203,18 @@ app.get("/rooms/:title/members",roomMember ,async (req,res,next)=>{
         var isMember=room.members.includes(req.user._id)
         console.log(isMember)
         await room.populate('members').execPopulate()
-        res.send(room.members)
+        var members=[]
+        for(i in room.members){
+            members.push({
+                _id:room.members[i]._id,
+                username:room.members[i].username,
+                status:room.members[i].status,
+                avatar:room.members[i].avatar,
+                lastSeen:room.members[i].lastSeen,
+                moderator:room.moderators.includes(room.members[i]._id)
+            })
+        }
+        res.send(members)
     }
     catch(e){
         return next({
@@ -303,6 +314,25 @@ app.get("/allMessages/:title", roomMember, async (req,res,next)=>{
     }
 })
 
-
+app.post("/room/:title/moderator/:username", roomowner, async (req, res, next)=>{
+    try{
+        var user =await User.findOne({
+            username:req.params.username
+        })
+        if(!user)
+            return next({
+                status:404,
+                message:"No such user found"
+            })
+        req.room.moderators.push(user._id)
+        await req.room.save()
+        res.send(req.room)
+    }
+    catch(e){
+        next({
+            message:e.message
+        })
+    }
+})
 
 module.exports=app
