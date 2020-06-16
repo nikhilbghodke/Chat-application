@@ -100,6 +100,13 @@ app.get("/allChannels", async (req, res, next) => {
 //update channel
 app.patch("/room/:title/channels/:name", roomOwner, async (req, res, next) => {
     try {
+        var keys= Object.keys(req.body)
+        for(key in keys){
+            console.log(keys[key])
+            if(!req.body[keys[key]])
+                delete req.body[keys[key]]
+        }
+        console.log(req.body)
         var channel = await Channel.findOne({
             title: req.params.name,
             room:req.room._id
