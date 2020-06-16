@@ -1,24 +1,54 @@
 import React from 'react'
 import { connect } from 'react-redux';
-import jwtDecode from "jwt-decode";
 import LoadingOverlay from 'react-loading-overlay';
+import { Link } from 'react-router-dom';
+import { Modal, Button, Form, Col, ListGroup, ListGroupItem, Row } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-import { setAuthorizationToken, getCurrentUser, getAllRoomsOfUser, getAllPublicRooms } from '../store/actions/auth';
+import {
+    setAuthorizationToken,
+    getCurrentUser,
+    getAllRoomsOfUser,
+    getAllPublicRooms,
+    joinPublicRoom
+} from '../store/actions/auth';
 import { initRoom } from '../store/actions/chatActions'
+import { logout } from '../store/actions/auth'
+import { setTokenHeader } from '../services/api';
+import CreateRoom from './roomPopUp';
 
 import Icon from '../Assests/Images/icon-logo-2.png'
 import Profile from '../Assests/Images/acc.png'
 import searchIcon from "../Assests/Images/search-icon.png";
 
 import './RoomPage.css'
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { setTokenHeader } from '../services/api';
-import { Link } from 'react-router-dom';
 
-import { logout } from '../store/actions/auth'
 
 class RoomPage extends React.Component {
 
+    state = {
+        show: false,
+        invites: [
+            'satvik.ndjnskjkj@gmail.com',
+            'nsjdknkjsnknasklaLK@SpeechGrammarList.com'
+        ],
+        task: '',
+    }
+
+    handleClose = () => this.setState({ show: false });
+    handleShow = () => this.setState({ show: true });
+
+    changeHandler = (event) => {
+        this.setState({ task: event.target.value })
+    }
+
+    handleInvites = (task) => {
+        if (task !== "") {
+            this.setState({ invites: [...this.state.invites, task], task: "" })
+        }
+    }
+
+    joinedRoomNames = [];
     componentDidMount() {
         if (!localStorage.jwtToken) {
             this.props.history.push("/authenticate/signin")
@@ -41,13 +71,13 @@ class RoomPage extends React.Component {
 
     roomList = () => {
         if (this.props.allRooms) {
-            console.log(this.props.allRooms)
             return this.props.allRooms.map((roomObject, index) => {
-                console.log(roomObject)
                 return <button
+                    key={index}
                     type="button"
                     className="list-group-item list-group-item-action rounded border border-dark"
                     onClick={() => {
+                        // console.log(roomObject)
                         this.props.initRoom(roomObject.title)
                         this.props.history.push("/chat")
                     }
@@ -64,11 +94,98 @@ class RoomPage extends React.Component {
         this.props.logout();
     };
 
+    publicRoomList = () => {
+        if (this.props.allPublicRooms) {
+            return this.props.allPublicRooms.map((roomObject, index) => {
+                if (!this.joinedRoomNames.includes(roomObject.title))
+                    return <button
+                        key={index}
+                        type="button"
+                        className="list-group-item list-group-item-action rounded border border-dark"
+                        onClick={() => {
+                            this.props.joinPublicRoom(roomObject.title)
+                            console.log(roomObject)
+                        }
+                        }
+                    >
+                        {roomObject.title}
+                    </button>
+            })
+        }
+    }
+
+    modalElement = () => {
+        return (
+            <Modal show={this.state.show} onHide={this.handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Create Room</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group >
+                            <Form.Label>Room Name</Form.Label>
+                            <Form.Control type="text" placeholder="Enter Name" />
+                        </Form.Group>
+
+                        <Form.Group >
+                            <Form.Label>Description</Form.Label>
+                            <Form.Control type="text" placeholder="Enter Description" />
+                        </Form.Group>
+
+                        <Form.Group controlId="exampleForm.SelectCustom">
+                            <Form.Label>Privacy</Form.Label>
+                            <Form.Control as="select" custom>
+                                <option>Private</option>
+                                <option>Public</option>
+                            </Form.Control>
+                        </Form.Group>
+
+                        <Form.Group>
+
+                            <Form.Label>Invite</Form.Label>
+                            <Row>
+                                <Col sm="10"><Form.Control type="text" placeholder="Enter Email" onChange={this.changeHandler} value={this.state.task} /></Col>
+                                <Col><Button className="float-right" onClick={() => { this.handleInvites(this.state.task) }}>Add</Button></Col>
+                            </Row>
+                            <Form.Group style={{ marginTop: 20, }}>
+                                <ListGroup >{this.state.invites.length === 0 ? null : this.state.invites.map((invite) =>
+                                    <ListGroupItem style={{ flexDirection: 'row' }}>{invite}
+
+                                        <span className="glyphicon glyphicon-trash"></span>
+
+                                    </ListGroupItem>
+                                )}
+                                </ListGroup>
+                            </Form.Group>
+                            <Col>
+
+                            </Col>
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="outline-danger" onClick={this.handleClose}>
+                        Close
+                        </Button>
+                    <Button variant="outline-primary" onClick={this.handleClose}>
+                        Create!
+                        </Button>
+                </Modal.Footer>
+            </Modal>
+        )
+
+    }
+
     render() {
-        console.log(this.props)
+        // console.log(this.props)
+        if (this.props.allRooms)
+            this.props.allRooms.forEach((roomObject, index) => {
+                this.joinedRoomNames.push(roomObject.title)
+            })
+
         return (
             <LoadingOverlay
-                active={!this.props.isRoomLoaded}
+                active={!this.props.isRoomLoaded || this.props.joiningNewRoom}
                 spinner
                 text="Retrieving the rooms that you are in..." >
                 <ul className="nav">
@@ -96,18 +213,14 @@ class RoomPage extends React.Component {
                                     <a className="navbar-brand mb-0 h1">Choose your Interest :)</a>
                                     <form className="form-inline">
                                         <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"></input>
-                                        <button className="btn my-2 my-sm-0" type="submit">
+                                        <button className="btn my-2 my-sm-0" type="button">
                                             <img src={searchIcon} width="45" height="40" alt="search"></img>
                                         </button>
                                     </form>
                                 </nav>
 
                                 <div className="list-group">
-                                    <a href="#" className="list-group-item list-group-item-action rounded border border-dark">Cras justo odio </a>
-                                    <a href="#" className="list-group-item list-group-item-action rounded border border-dark">Cras justo odio </a>
-                                    <a href="#" className="list-group-item list-group-item-action rounded border border-dark">Cras justo odio </a>
-                                    <a href="#" className="list-group-item list-group-item-action rounded border border-dark">Cras justo odio </a>
-                                    <a href="#" className="list-group-item list-group-item-action rounded border border-dark">Cras justo odio </a>
+                                    {this.publicRoomList()}
                                 </div>
                             </div>
                         </div>
@@ -127,13 +240,21 @@ class RoomPage extends React.Component {
                                 Let's go!</button>
                             <p className="form-bottom-text">
                                 Don't have a room yet?
-                                <a href="#"> Create One!</a>
+                                <a
+                                    href="#"
+                                    onClick={() => {
+                                        this.handleShow();
+                                        console.log("BUTTON CLICK")
+                                    }}
+                                    className="new-room"
+                                > Create One!</a>
                             </p>
                         </div>
                     </div>
 
                 </div>
 
+                {this.modalElement()}
             </LoadingOverlay>
         );
     }
@@ -143,7 +264,9 @@ const mapStateToProps = (state) => {
     return {
         isAuthenticated: state.currentUser.isAuthenticated,
         isRoomLoaded: state.currentUser.isRoomLoaded,
-        allRooms: state.currentUser.allRooms
+        allRooms: state.currentUser.allRooms,
+        allPublicRooms: state.currentUser.allPublicRooms,
+        joiningNewRoom: state.currentUser.joinPublicRoom,
     }
 }
 
@@ -152,7 +275,8 @@ const mapDispatchToProps = (dispatch) => {
         getCurrentUser: () => { dispatch(getCurrentUser()) },
         getAllRoomsOfUser: () => { dispatch(getAllRoomsOfUser()) },
         initRoom: (roomName) => { dispatch(initRoom(roomName)) },
-        getAllPublicRooms: () => { dispatch(getAllPublicRooms()) }
+        getAllPublicRooms: () => { dispatch(getAllPublicRooms()) },
+        joinPublicRoom: (roomName) => { dispatch(joinPublicRoom(roomName)) }
     }
 }
 

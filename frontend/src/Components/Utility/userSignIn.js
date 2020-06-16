@@ -33,8 +33,7 @@ class UserSignIn extends Component {
         })
     }
     render() {
-        console.log(this.props)
-        console.log(currentUser)
+        
         const { errors, removeError,history} = this.props;
         history.listen(() => {
             removeError();

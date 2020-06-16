@@ -34,12 +34,12 @@ class Chats extends React.Component {
 
     componentDidMount() {
 
-        if (this.props.roomName === ""){
+        if (this.props.roomName === "") {
             // No room is selected
             this.props.history.push("/rooms")
             return
         }
-        if (!localStorage.jwtToken){
+        if (!localStorage.jwtToken) {
             this.props.history.push('/authenticate/signin')
             return
         }
@@ -48,6 +48,8 @@ class Chats extends React.Component {
         this.props.getAllChannelMessages(this.room)
 
         // Retrieve all direct messages
+        console.log("DIRECT MESSAGES ROOM")
+        console.log(this.room)
         this.props.getAllDirectMessages(this.room)
 
         // This will initialize the socket
@@ -108,13 +110,14 @@ class Chats extends React.Component {
             500)
     }
 
-    sendMessage = (newMessage, conversation, channel = true) => {
+    sendMessage = (newMessage, conversation, channel = true, type = "text") => {
         // Send message to socket and to the REDUX store
 
         let packet = {
             room: this.room,
             msg: newMessage,
-            token: this.token
+            token: this.token,
+            type: type
         }
         if (channel)
             packet.channel = conversation
@@ -175,15 +178,16 @@ class Chats extends React.Component {
                                     {this.props.isChatLoaded ? this.listElement(this.props.channels) : null}
                                 </div>
                             </Collapse>
-                            <div className="channel-list-header" onClick={() => this.setState({ messageCollpase: !this.state.messageCollpase })}>
-                                Direct Messages
-                            {this.state.messageCollpase ? <ExpandLess /> : <ExpandMore />}
-                            </div>
                             <LoadingOverlay
                                 active={!this.props.isDirectMessagesLoaded && this.props.isChatLoaded}
                                 spinner
                                 text="Loading"
                             >
+                                <div className="channel-list-header" onClick={() => this.setState({ messageCollpase: !this.state.messageCollpase })}>
+                                    Direct Messages
+                            {this.state.messageCollpase ? <ExpandLess /> : <ExpandMore />}
+                                </div>
+
                                 <Collapse in={this.state.messageCollpase} timeout="auto" unmountOnExit>
                                     <div>
                                         {this.props.isDirectMessagesLoaded ? this.listElement(this.props.users, false) : null}
@@ -224,7 +228,7 @@ const mapStateToProps = (state) => {
         selectedChannelIndex: state.chatReducer.selectedChannelIndex,
         selectedConversation: state.chatReducer.selectedConversation,
         isChatLoaded: state.chatReducer.isChatLoaded,
-        isDirectMessagesLoaded: state.chatReducer.isDirectMessagesLoaded
+        isDirectMessagesLoaded: state.chatReducer.isDirectMessagesLoaded,
     }
 }
 
@@ -234,7 +238,7 @@ const mapDispatchToProps = (dispatch) => {
         changeConversation: (typeOfConversation, indexOfConversation) => { dispatch(changeCoversation(typeOfConversation, indexOfConversation)) },
         getAllChannelMessages: (roomName, token) => { dispatch(getAllChannelMessages(roomName, token)) },
         getAllDirectMessages: (roomName, token) => { dispatch(getAllDirectMessages(roomName, token)) },
-        directMessagesLoadingCompleted: () => { dispatch(directMessagesLoadingCompleted()) }
+        directMessagesLoadingCompleted: () => { dispatch(directMessagesLoadingCompleted()) },
     }
 }
 

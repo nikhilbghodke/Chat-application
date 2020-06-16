@@ -80,7 +80,7 @@ export function getAllChannelMessages(roomName) {
                         let channelObject = {
                             name: channel,
                             messages: channels[channel].messages,
-                            description:channels[channel].description
+                            description: channels[channel].description
                         }
                         listOfChannels.push(channelObject)
                     }

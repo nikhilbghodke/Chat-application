@@ -1,8 +1,8 @@
 import React from 'react';
-import TextField from '@material-ui/core/TextField';
 import MessageList from './messageList';
 import { connect } from 'react-redux';
 
+import NewMessageComponent from './newMessage';
 import { addNewMessage, } from '../../../store/actions/chatActions';
 
 class ChatBox extends React.Component {
@@ -15,30 +15,47 @@ class ChatBox extends React.Component {
         })
     }
 
-    addNewMessage = () => {
-        if (this.state.message.length === 0) 
-            return;
-        
-        const message = {
-            content: this.state.message,
-            owner: {username: this.props.currentUser},
-            createdAt: new Date(Date.now()).toISOString()
+    sendLocation = (locationMessageString) => {
+        const message = {   // For the store
+            content: locationMessageString,
+            owner: { username: this.props.currentUser },
+            createdAt: new Date(Date.now()).toISOString(),
+            type: "location"
         }
         let nameOfConversation = "";
-
         // Send the message through socket
         if (this.props.currentConversation[0] === "channels") {
             nameOfConversation = this.props.currentConversation[1].name
-            this.props.sendMessage(this.state.message, nameOfConversation, true)
+            this.props.sendMessage(locationMessageString, nameOfConversation, true, "location")
         } else {
             nameOfConversation = this.props.currentConversation[1].name
-            this.props.sendMessage(this.state.message, nameOfConversation, false)
+            this.props.sendMessage(locationMessageString, nameOfConversation, false, "location")
+        }
+        this.props.addNewMessage(message, this.props.currentConversation[0], nameOfConversation)
+    }
+
+    addNewMessage = () => {
+        if (this.state.message.length === 0)
+            return;
+        const message = {
+            content: this.state.message,
+            owner: { username: this.props.currentUser },
+            createdAt: new Date(Date.now()).toISOString()
+        }
+        let nameOfConversation = "";
+        // Send the message through socket
+        if (this.props.currentConversation[0] === "channels") {
+            nameOfConversation = this.props.currentConversation[1].name
+            this.props.sendMessage(this.state.message, nameOfConversation, true, "text")
+        } else {
+            nameOfConversation = this.props.currentConversation[1].name
+            this.props.sendMessage(this.state.message, nameOfConversation, false, "text")
         }
         this.props.addNewMessage(message, this.props.currentConversation[0], nameOfConversation)
         this.setState({
             message: ""
         })
-        
+
     }
     render() {
         // console.log(this.props)
@@ -58,6 +75,8 @@ class ChatBox extends React.Component {
             isPersonal = true;
         }
 
+        // console.log(this.props)
+
         return (
             <div className="chat-area-border">
                 <div className="chat-header">
@@ -72,26 +91,12 @@ class ChatBox extends React.Component {
                     <MessageList currentUser={this.props.currentUser} messageList={conversation.messages} />
                 </div>
                 <div className="new-message">
-                    <div className="message-options">
-                        Attach
-                </div>
-                    <div className="message-text">
-                        <TextField
-                            name="new-message"
-                            placeholder="New Message"
-                            id="new-message-text-field"
-                            variant="outlined"
-                            multiline
-                            value={this.state.message}
-                            // rows={2}
-                            onChange={this.handleNewMessageChange}
-                        >
-
-                        </TextField>
-                    </div>
-                    <button className="send-button" onClick={this.addNewMessage}>
-                        Send
-                </button>
+                    <NewMessageComponent
+                        currentMessage={this.state.message}
+                        messageOnChange={this.handleNewMessageChange}
+                        sendOnClick={this.addNewMessage}
+                        sendLocation={this.sendLocation}
+                    />
                 </div>
 
             </div>
@@ -107,7 +112,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        addNewMessage: (message, typeOfConversation, conversationName) => {dispatch(addNewMessage(message, typeOfConversation, conversationName))},
+        addNewMessage: (message, typeOfConversation, conversationName) => { dispatch(addNewMessage(message, typeOfConversation, conversationName)) },
     }
 }
 
