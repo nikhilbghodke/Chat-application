@@ -7,8 +7,10 @@ import Dashboard from './Sub-Components/dashboard';
 import People from './Sub-Components/people';
 import Chats from './Sub-Components/chats';
 import LoadingOverlay from 'react-loading-overlay';
+import Edit from './Sub-Components/edit';
 
 import './mainChatWindow.css';
+
 
 class MainChatWindow extends React.Component {
     state = {
@@ -26,11 +28,13 @@ class MainChatWindow extends React.Component {
             return <Chats />
         else if (this.state.selected === "people")
             return <People />
+         else if (this.state.selected === "edit")
+            return <Edit />
         return <Dashboard />
     }
 
     render() {
-        console.log(this.props)
+        
         return (
             <div className="outer-layout">
                 <Header roomName={this.props.roomName} currentUser={this.props.currentUser}/>

@@ -15,7 +15,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { setTokenHeader } from '../services/api';
 import { Link } from 'react-router-dom';
 
-import {logout} from '../store/actions/auth'
+import { logout } from '../store/actions/auth'
 
 class RoomPage extends React.Component {
 
@@ -62,7 +62,7 @@ class RoomPage extends React.Component {
     logout = e => {
         e.preventDefault();
         this.props.logout();
-      };
+    };
 
     render() {
         console.log(this.props)
@@ -70,18 +70,16 @@ class RoomPage extends React.Component {
             <LoadingOverlay
                 active={!this.props.isRoomLoaded}
                 spinner
-                text="Retrieving the rooms that you are in..."
-            >
+                text="Retrieving the rooms that you are in..." >
                 <ul className="nav">
                     <li className="nav-item">
-                        <a className="nav-link active" href="#">
-                            <div className="icon-section-auth">
-                                <img src={Icon} alt="icon" className="icon" onClick={() => alert("ICON")} />
-                            </div></a>
+                        <div className="icon-section-auth">
+                            <img src={Icon} alt="icon" width="5px" className="icon" onClick={() => alert("ICON")} />
+                        </div>
                     </li>
-                   <li className="navbar-brand">
-                       <Link to="/authenticate/signin" onCLick={this.logout}>Logout</Link>
-                   </li>
+                    <li className="navbar-brand">
+                        <Link to="/authenticate/signin" onCLick={this.logout}>Logout</Link>
+                    </li>
                 </ul>
 
                 <div className="roompage">

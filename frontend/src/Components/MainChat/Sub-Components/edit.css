@@ -1,0 +1,29 @@
+.mainbody{
+    margin: 3rem;
+    display: flex;
+    flex-wrap: wrap;
+    flex-grow: 1;
+    flex-basis: 0;
+    justify-content: space-evenly;
+}
+
+form{
+ text-align: center;
+display: flex;
+flex-direction: column;
+padding:2rem;
+margin: 1rem;
+max-width: 650px;
+}
+
+textarea{
+    resize: none;
+    columns: 2;
+}
+
+.textdiv{
+    display: inline;
+    text-align: center;
+
+}
+
