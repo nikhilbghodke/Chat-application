@@ -13,7 +13,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: cadetblue;
+  background-color:#9fa9cf;
   padding-right: 3rem;
 }
 .profile img{
@@ -72,6 +72,8 @@
 .form-botton-text {
   margin-bottom: 2rem;
 }
+
+
 
 @media (max-width: 700px) {
   .nav{
