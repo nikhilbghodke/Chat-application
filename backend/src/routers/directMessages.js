@@ -19,6 +19,7 @@ app.get("/allDirectMessages/:title", roomMember, async (req,res)=>{
     for(var i=0;i<members.length;i++){
         var member = members[i]
         var m=await DirectMessage.find({
+            room:req.room._id,
             $or:[{
                 owner: member._id,
                 to:req.user._id
