@@ -15,6 +15,12 @@ app.post("/rooms", auth,async (req,res,next)=>{
         room.owner=req.user._id
         room.members.push(req.user._id)
         await room.save()
+        var defaultChannels=["general","chill"]
+        for(i in defaultChannels){
+            var channel= new Channel({title:defaultChannels[i]})
+            channel.room=room._id
+            await channel.save()
+        }
         res.status(201).send(room)
     }
     catch(e){
