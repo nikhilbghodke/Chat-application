@@ -132,9 +132,18 @@
   width: fit-content;
 }
 
+.location-content{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  width: fit-content;
+}
+
 .location-content img {
-  /* height: 6rem;
-  width: 6rem; */
+  width: 40%;
+}
+.location-content a {
+  width: fit-content;
 }
 
 .message-area {

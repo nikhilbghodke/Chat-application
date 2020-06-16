@@ -5,9 +5,9 @@ function TextMessage(props) {
 
     const getCoords = (url) => {
         console.log(url)
-        const coords = url.split("=")[1]
-        console.log(coords)
-        return coords
+        const coords = url.split("=")[1].split(",")
+        console.log([coords[1], coords[0]])
+        return coords[1].toString() + ", " + coords[0].toString()
     }
 
     if (props.messageObject.type === "location") {
@@ -28,8 +28,8 @@ function TextMessage(props) {
                     </div>
                     :
                     <div className="location-content">
-                        {props.messageObject.content}
-                        <img src={`https://api.mapbox.com/styles/v1/mapbox/outdoors-v11/static/${getCoords(props.messageObject.content)},13,0/400x200@2x?access_token=pk.eyJ1Ijoic2F0dmlrZGFuZGFsZSIsImEiOiJja2JpMmJkdGQwYjZhMnRwamlmYmhmZDQ5In0.xEAG7PvsDEt0lM4PCUQ_NA`} alt="location-image" class="static-map"></img>
+                        <a href={props.messageObject.content}>{props.messageObject.content}</a>
+                        <img src={`https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/${getCoords(props.messageObject.content)},11,0/400x200@2x?access_token=pk.eyJ1Ijoic2F0dmlrZGFuZGFsZSIsImEiOiJja2JpMmJkdGQwYjZhMnRwamlmYmhmZDQ5In0.xEAG7PvsDEt0lM4PCUQ_NA&logo=false`} alt="location-image" class="static-map"></img>
                     </div>
                 }
                 <div className="message-time">
