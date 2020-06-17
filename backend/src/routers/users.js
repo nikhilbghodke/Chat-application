@@ -1,10 +1,12 @@
 const path = require('path');
 const express= require("express")
+const logger= require("pino")()
 const multer= require("multer")
 const User = require("../models/user.js")
 const Verification= require("../models/emailVerification.js")
 const auth=require("../middlewares/auth.js")
 const sendVerification = require("../utils/sendEmail").sendVerification
+
 
 const uploadDir= path.join(__dirname,"../../uploads")
 var app=express.Router()
@@ -81,7 +83,7 @@ app.post("/login", async (req,res,next)=>{
      res.send({user,token})
     }
     catch(e){
-        console.log(e)
+        logger.error(e)
         return next({
             status: 404,
             message:e.message

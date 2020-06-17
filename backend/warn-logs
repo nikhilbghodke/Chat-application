@@ -1,0 +1,9 @@
+{"level":40,"time":1592382777064,"pid":17639,"hostname":"nikhil-Aspire-V5-571","msg":"lag gaya "}
+{"level":40,"time":1592382917141,"pid":17784,"hostname":"nikhil-Aspire-V5-571","msg":"lag gaya "}
+{"level":40,"time":1592383165123,"pid":17937,"hostname":"nikhil-Aspire-V5-571","msg":"lag gaya "}
+{"level":50,"time":1592383179407,"pid":17937,"hostname":"nikhil-Aspire-V5-571","stack":"Error: password did not match\n    at Function.schema.statics.findByCredentials (/home/nikhil/node/DbProject/backend/src/models/user.js:75:9)\n    at async /home/nikhil/node/DbProject/backend/src/routers/users.js:81:20","type":"Error","msg":"password did not match"}
+{"level":50,"time":1592385984018,"pid":18728,"hostname":"nikhil-Aspire-V5-571","stack":"Error: password did not match\n    at Function.schema.statics.findByCredentials (/home/nikhil/node/DbProject/backend/src/models/user.js:75:9)\n    at async /home/nikhil/node/DbProject/backend/src/routers/users.js:81:20","type":"Error","msg":"password did not match"}
+{"level":40,"time":1592385984534,"pid":18728,"hostname":"nikhil-Aspire-V5-571","status":404,"message":"password did not match"}
+{"level":40,"time":1592386018366,"pid":18728,"hostname":"nikhil-Aspire-V5-571","status":404,"message":"No such user"}
+{"level":40,"time":1592386170171,"pid":19013,"hostname":"nikhil-Aspire-V5-571","status":404,"message":"No such user"}
+{"level":40,"time":1592386191281,"pid":19013,"hostname":"nikhil-Aspire-V5-571","status":404,"message":"No such user"}

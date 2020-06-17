@@ -1,0 +1,17 @@
+{"level":30,"time":1592386090781,"pid":19013,"hostname":"nikhil-Aspire-V5-571","msg":"Node server has been started at port 8081"}
+Node server has been started at port 8081
+[0;36mMongoose:[0m users.ensureIndex({ username: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m rooms.ensureIndex({ title: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+[0;36mMongoose:[0m users.ensureIndex({ email: [33m1[39m }, { unique: [33mtrue[39m, background: [33mtrue[39m })
+{ id: '5ee363d1eaf110190057e802', iat: 1592382979 }
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("5ee363d1eaf110190057e802"), [32m'tokens.token'[39m: [32m'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlZTM2M2QxZWFmMTEwMTkwMDU3ZTgwMiIsImlhdCI6MTU5MjM4Mjk3OX0.jUwrjywjZUO2QYpBN0VtmqPV1WL7OMpKCdPxk4cIFrg'[39m}, { projection: {} })
+Error: No such user
+    at auth (/home/nikhil/node/DbProject/backend/src/middlewares/roomMember.js:13:19)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+{"level":40,"time":1592386170171,"pid":19013,"hostname":"nikhil-Aspire-V5-571","status":404,"message":"No such user"}
+{ id: '5ee363d1eaf110190057e802', iat: 1592382979 }
+[0;36mMongoose:[0m users.findOne({ _id: ObjectId("5ee363d1eaf110190057e802"), [32m'tokens.token'[39m: [32m'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlZTM2M2QxZWFmMTEwMTkwMDU3ZTgwMiIsImlhdCI6MTU5MjM4Mjk3OX0.jUwrjywjZUO2QYpBN0VtmqPV1WL7OMpKCdPxk4cIFrg'[39m}, { projection: {} })
+Error: No such user
+    at auth (/home/nikhil/node/DbProject/backend/src/middlewares/roomMember.js:13:19)
+    at processTicksAndRejections (internal/process/task_queues.js:97:5)
+{"level":40,"time":1592386191281,"pid":19013,"hostname":"nikhil-Aspire-V5-571","status":404,"message":"No such user"}

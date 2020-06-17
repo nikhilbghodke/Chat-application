@@ -19,6 +19,7 @@ const auth= async function(req,res,next){
     }
     catch(e){
         //console.log(e.message)
+        //logger.warn(e)
         return next({
             status: 401,
             message: e.message
