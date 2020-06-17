@@ -97,6 +97,7 @@ const chatReducer = (state = initialState, action) => {
             }
 
         case INIT_ROOM:
+            console.log(action)
             return {
                 ...state,
                 roomName: action.roomName,

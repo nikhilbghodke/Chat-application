@@ -1,5 +1,15 @@
 import { apiCall, setTokenHeader } from "../../services/api";
-import { SET_CURRENT_USER, GET_CURRENT_USER, SET_ALL_ROOMS, ROOM_LOADING_COMPLETE, INIT_PUBLIC_ROOMS, PUBLIC_ROOMS_LOADED } from "../actionTypes";
+import {
+  SET_CURRENT_USER,
+  GET_CURRENT_USER,
+  SET_ALL_ROOMS,
+  ROOM_LOADING_COMPLETE,
+  INIT_PUBLIC_ROOMS,
+  PUBLIC_ROOMS_LOADED,
+  JOINING_ROOM,
+  JOINED_ROOM
+} from "../actionTypes";
+import { initRoom } from './chatActions';
 import { addError, removeError } from "./error";
 import { serverBaseURL } from '../../services/api'
 import jwtDecode from "jwt-decode";
@@ -26,6 +36,34 @@ export function roomLoadingComplete() {
   }
 }
 
+export function setAllPublicRooms(allPublicRooms) {
+  return {
+    type: INIT_PUBLIC_ROOMS,
+    allPublicRooms
+  }
+}
+
+export function publicRoomsLoadingComplete() {
+  return {
+    type: PUBLIC_ROOMS_LOADED
+  }
+}
+
+export function joiningNewRoom() {
+  return {
+    type: JOINING_ROOM
+  }
+}
+
+export function joinedRoom(roomObject) {
+  return {
+    type: JOINED_ROOM,
+    roomObject
+  }
+}
+
+// ACTIONS CREATERS DONE
+
 export function setAuthorizationToken(token) {
   setTokenHeader(token);
 }
@@ -46,8 +84,9 @@ export function authUser(type, userData) {
       return apiCall("post", `${serverBaseURL}/${type}`, userData)
         .then(({ token, ...user }) => {
           localStorage.setItem("jwtToken", token);
+          console.log(user)
           setAuthorizationToken(token);
-          dispatch(setCurrentUser(user));
+          dispatch(setCurrentUser(user.user));
           dispatch(removeError());
           resolve(); // indicate that the API call succeeded
         })
@@ -120,10 +159,30 @@ export function getAllPublicRooms() {
     return new Promise(async (resolve, reject) => {
       try {
         const allPublicRooms = await apiCall("get", `${serverBaseURL}/allRoomsDb`, null);
-        console.log(allPublicRooms)
+        console.log(allPublicRooms);
+        dispatch(setAllPublicRooms(allPublicRooms));
+        dispatch(publicRoomsLoadingComplete());
         resolve();
       }
       catch (err) {
+        reject();
+      }
+    })
+  }
+}
+
+export function joinPublicRoom(roomName) {
+  return dispatch => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        dispatch(joiningNewRoom())
+        const roomObject = await apiCall("post", `${serverBaseURL}/rooms/${roomName}/join`, null);
+        // dispatch(initRoom(roomObject.title))
+        dispatch(joinedRoom(roomObject))
+        resolve();
+      }
+      catch (err) {
+        console.log(err)
         reject();
       }
     })

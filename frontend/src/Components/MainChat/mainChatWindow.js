@@ -39,7 +39,7 @@ class MainChatWindow extends React.Component {
             <div className="outer-layout">
                 <Header roomName={this.props.roomName} currentUser={this.props.currentUser}/>
                 <LoadingOverlay
-                    active={!this.props.isChatLoaded}
+                    active={!this.props.isChatLoaded || this.props.joingNewRoom}
                     spinner
                     text="Please wait while we load your chats..."
                 >
@@ -57,7 +57,8 @@ const mapStateToProps = (state) => {
     return {
         isChatLoaded: state.chatReducer.isChatLoaded,
         roomName: state.chatReducer.roomName,
-        currentUser: state.chatReducer.currentUser
+        currentUser: state.chatReducer.currentUser,
+        joingNewRoom: state.currentUser.joingNewRoom
     }
 }
 

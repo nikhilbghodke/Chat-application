@@ -1,4 +1,12 @@
-import { SET_CURRENT_USER, SET_ALL_ROOMS, ROOM_LOADING_COMPLETE, PUBLIC_ROOMS_LOADED } from "../actionTypes";
+import {
+  SET_CURRENT_USER,
+  SET_ALL_ROOMS,
+  ROOM_LOADING_COMPLETE,
+  PUBLIC_ROOMS_LOADED,
+  INIT_PUBLIC_ROOMS,
+  JOINING_ROOM,
+  JOINED_ROOM
+} from "../actionTypes";
 
 const DEFAULT_STATE = {
   isAuthenticated: false, // hopefully be true, when logged in
@@ -6,7 +14,8 @@ const DEFAULT_STATE = {
   allRooms: [],
   isRoomLoaded: false,
   allPublicRooms: [],
-  publicRoomsLoaded: false
+  publicRoomsLoaded: false,
+  joiningNewRoom: false
 };
 
 export default (state = DEFAULT_STATE, action) => {
@@ -20,10 +29,10 @@ export default (state = DEFAULT_STATE, action) => {
       };
 
     case SET_ALL_ROOMS:
-        return {
-          ...state,
-          allRooms: action.allRooms
-        }
+      return {
+        ...state,
+        allRooms: action.allRooms
+      }
 
     case ROOM_LOADING_COMPLETE:
       return {
@@ -32,12 +41,40 @@ export default (state = DEFAULT_STATE, action) => {
       }
 
     case PUBLIC_ROOMS_LOADED:
-        return {
-          ...state,
-          publicRoomsLoaded: true
-        }
+      return {
+        ...state,
+        publicRoomsLoaded: true
+      }
 
-    // case 
+    case INIT_PUBLIC_ROOMS:
+      return {
+        ...state,
+        allPublicRooms: action.allPublicRooms
+      }
+
+    case JOINING_ROOM:
+      return {
+        ...state,
+        joiningNewRoom: true
+      }
+
+    case JOINED_ROOM:
+      // After the room is joined
+      console.log(action.roomName)
+      let newPublicRooms = state.allPublicRooms;
+      const index = newPublicRooms.indexOf(action.roomObject);
+      if (index !== -1)
+        newPublicRooms.splice(index, 1);
+      console.log(newPublicRooms)
+      let newJoinedRooms = [...state.allRooms]
+      newJoinedRooms.push(action.roomObject)
+      console.log(newJoinedRooms)
+      return {
+        ...state,
+        allPublicRooms: newPublicRooms,
+        allRooms: newJoinedRooms,
+        joiningNewRoom: false
+      }
 
     default:
       return state;
