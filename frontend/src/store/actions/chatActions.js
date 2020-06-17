@@ -5,10 +5,11 @@ import {
     CHAT_LOADING_DONE,
     INIT_USERS_CONVO,
     DIRECTS_LOADING_DONE,
-    INIT_ROOM
+    INIT_ROOM,
+    MEMBERS
 } from '../actionTypes';
 import { serverBaseURL, apiCall, setTokenHeader } from '../../services/api'
-import { addError } from "./error";
+import { addError, removeError } from "./error";
 
 export function addNewMessage(message, typeOfConversation, conversationName) {
     return {
@@ -60,6 +61,12 @@ export function initRoom(roomName) {
     }
 }
 
+export function roomMembers(members){
+    return {
+        type:MEMBERS,
+        members
+    }
+}
 /* *************************** */
 
 
@@ -123,3 +130,38 @@ export function getAllDirectMessages(roomName) {
         })
     }
 }
+export function getMembers(roomName) {
+    return dispatch => {
+        return new Promise((resolve, reject) => {
+            return apiCall("get", `${serverBaseURL}/rooms/${roomName}/members`,null)
+                .then((members) => {
+                    dispatch(roomMembers(members))
+                    dispatch(removeError())
+                    resolve();
+                })
+                .catch(error => {
+                    alert(error.message)
+                    dispatch(addError(error.message));
+                    reject();
+                })
+        })
+    }
+}
+export function removeUser(title,name) {
+    console.log(name)
+    console.log(title)
+    return dispatch => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const members = await apiCall("get", `${serverBaseURL}/rooms/${title}/kick/${name}`,null);
+          dispatch(removeError());
+          resolve();
+        }
+        catch (err) {
+          console.log(err);
+          dispatch(addError(err.message));
+          reject();
+        }
+      });
+    };
+  }

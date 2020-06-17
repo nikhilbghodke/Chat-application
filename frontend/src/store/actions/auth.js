@@ -315,3 +315,20 @@ export function createRoom(roomData) {
     })
   }
 }
+export function makeModerator(title,username) {
+   return dispatch => {
+     return new Promise(async (resolve, reject) => {
+       try {
+         const moderator = await apiCall("post", `${serverBaseURL}/room/${title}/moderator/${username}`,null);
+         dispatch(removeError());
+         resolve();
+       }
+       catch (err) {
+         console.log(err);
+         dispatch(addError(err.message));
+         reject();
+       }
+     });
+   };
+ }
+

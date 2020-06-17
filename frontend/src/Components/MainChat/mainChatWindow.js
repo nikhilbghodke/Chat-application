@@ -12,6 +12,7 @@ import Edit from './Sub-Components/edit';
 import './mainChatWindow.css';
 
 
+
 class MainChatWindow extends React.Component {
     state = {
         selected: "chats",  // Sidebar component clicked and selected
@@ -22,14 +23,18 @@ class MainChatWindow extends React.Component {
             selected: newChoice
         })
     }
-
+    roomList = () => {
+        return this.props.allRooms.filter((obj) => {
+          return obj["title"] === this.props.roomName
+        })
+      }
     renderContent = () => {
         if (this.state.selected === "chats")
             return <Chats />
         else if (this.state.selected === "people")
-            return <People />
+            return <People currentRoom={this.roomList()[0]} userid={this.props.userid}/>
          else if (this.state.selected === "edit")
-            return <Edit />
+            return <Edit currentRoom={this.roomList()[0]} userid={this.props.userid}/>
         return <Dashboard />
     }
 
@@ -58,7 +63,9 @@ const mapStateToProps = (state) => {
         isChatLoaded: state.chatReducer.isChatLoaded,
         roomName: state.chatReducer.roomName,
         currentUser: state.chatReducer.currentUser,
-        joingNewRoom: state.currentUser.joingNewRoom
+        joingNewRoom: state.currentUser.joingNewRoom,
+        allRooms: state.currentUser.allRooms,
+        userid: state.currentUser.user._id
     }
 }
 

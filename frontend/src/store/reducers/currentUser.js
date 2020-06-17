@@ -7,7 +7,8 @@ import {
   JOINING_ROOM,
   JOINED_ROOM,
   ROOM_LOADING_START,
-  SET_ROOM_ERROR
+  SET_ROOM_ERROR,
+  MEMBERS
 } from "../actionTypes";
 
 const DEFAULT_STATE = {
@@ -18,7 +19,8 @@ const DEFAULT_STATE = {
   allPublicRooms: [],
   publicRoomsLoaded: false,
   joiningNewRoom: false,
-  roomError: ""
+  roomError: "",
+  members:[]
 };
 
 export default (state = DEFAULT_STATE, action) => {
@@ -91,6 +93,11 @@ export default (state = DEFAULT_STATE, action) => {
         ...state,
         roomError: action.errorMessage
       }
+      case MEMBERS:
+        return{
+          ...state,
+          members:action.members
+        }
 
     default:
       return state;
