@@ -5,7 +5,9 @@ import {
   PUBLIC_ROOMS_LOADED,
   INIT_PUBLIC_ROOMS,
   JOINING_ROOM,
-  JOINED_ROOM
+  JOINED_ROOM,
+  ROOM_LOADING_START,
+  SET_ROOM_ERROR
 } from "../actionTypes";
 
 const DEFAULT_STATE = {
@@ -15,7 +17,8 @@ const DEFAULT_STATE = {
   isRoomLoaded: false,
   allPublicRooms: [],
   publicRoomsLoaded: false,
-  joiningNewRoom: false
+  joiningNewRoom: false,
+  roomError: ""
 };
 
 export default (state = DEFAULT_STATE, action) => {
@@ -24,6 +27,7 @@ export default (state = DEFAULT_STATE, action) => {
       console.log(action.user)
       return {
         // turn empty object into false or if there are keys, true
+        ...state,
         isAuthenticated: !!Object.keys(action.user).length,
         user: action.user
       };
@@ -74,6 +78,18 @@ export default (state = DEFAULT_STATE, action) => {
         allPublicRooms: newPublicRooms,
         allRooms: newJoinedRooms,
         joiningNewRoom: false
+      }
+
+    case ROOM_LOADING_START:
+      return {
+        ...state,
+        isRoomLoaded: false
+      }
+
+    case SET_ROOM_ERROR:
+      return {
+        ...state,
+        roomError: action.errorMessage
       }
 
     default:

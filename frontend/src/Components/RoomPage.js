@@ -4,13 +4,16 @@ import LoadingOverlay from 'react-loading-overlay';
 import { Link } from 'react-router-dom';
 import { Modal, Button, Form, Col, ListGroup, ListGroupItem, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Alert from 'react-bootstrap/Alert'
 
 import {
     setAuthorizationToken,
     getCurrentUser,
     getAllRoomsOfUser,
     getAllPublicRooms,
-    joinPublicRoom
+    joinPublicRoom,
+    createRoom,
+    setRoomError
 } from '../store/actions/auth';
 import { initRoom } from '../store/actions/chatActions'
 import { logout } from '../store/actions/auth'
@@ -28,18 +31,59 @@ class RoomPage extends React.Component {
 
     state = {
         show: false,
-        invites: [
-            'satvik.ndjnskjkj@gmail.com',
-            'nsjdknkjsnknasklaLK@SpeechGrammarList.com'
-        ],
+        invites: [],
+        roomName: "",
+        description: "",
+        private: true,
         task: '',
     }
 
-    handleClose = () => this.setState({ show: false });
+    handleClose = () => {
+        this.setState({ show: false , invites: []});
+        
+    }
     handleShow = () => this.setState({ show: true });
 
-    changeHandler = (event) => {
+    handleSubmit = () => {
+        // Validation
+        if (this.state.roomName.length === 0) {
+            this.props.setRoomError("Name can't be empty")
+            return
+        }
+
+        const roomObject = {
+            title: this.state.roomName,
+            description: this.state.description,
+            private: this.state.private
+        }
+
+        this.props.createRoom(roomObject);
+
+        this.setState({ show: false , invites: []});
+        console.log(this.state.roomName, this.state.description, this.state.private, this.state.invites)
+    }
+
+    emailChangeHandler = (event) => {
         this.setState({ task: event.target.value })
+    }
+
+    nameChangeHandler = (event) => {
+        this.setState({ roomName: event.target.value })
+    }
+
+    descriptionChangeHandler = (event) => {
+        this.setState({ description: event.target.value })
+    }
+
+    privacyChangeHandler = (event) => {
+        if (event.target.value === "Public")
+            this.setState({
+                private: false
+            })
+        else
+            this.setState({
+                private: true
+            })
     }
 
     handleInvites = (task) => {
@@ -52,6 +96,7 @@ class RoomPage extends React.Component {
     componentDidMount() {
         if (!localStorage.jwtToken) {
             this.props.history.push("/authenticate/signin")
+            return;
         }
         // Token exists.
         // Add this token to api header
@@ -124,17 +169,17 @@ class RoomPage extends React.Component {
                     <Form>
                         <Form.Group >
                             <Form.Label>Room Name</Form.Label>
-                            <Form.Control type="text" placeholder="Enter Name" />
+                            <Form.Control type="text" placeholder="Enter Name" onChange={this.nameChangeHandler} />
                         </Form.Group>
 
                         <Form.Group >
                             <Form.Label>Description</Form.Label>
-                            <Form.Control type="text" placeholder="Enter Description" />
+                            <Form.Control type="text" placeholder="Enter Description" onChange={this.descriptionChangeHandler} />
                         </Form.Group>
 
                         <Form.Group controlId="exampleForm.SelectCustom">
                             <Form.Label>Privacy</Form.Label>
-                            <Form.Control as="select" custom>
+                            <Form.Control as="select" custom onChange={this.privacyChangeHandler}>
                                 <option>Private</option>
                                 <option>Public</option>
                             </Form.Control>
@@ -144,7 +189,7 @@ class RoomPage extends React.Component {
 
                             <Form.Label>Invite</Form.Label>
                             <Row>
-                                <Col sm="10"><Form.Control type="text" placeholder="Enter Email" onChange={this.changeHandler} value={this.state.task} /></Col>
+                                <Col sm="10"><Form.Control type="text" placeholder="Enter Email" onChange={this.emailChangeHandler} value={this.state.task} /></Col>
                                 <Col><Button className="float-right" onClick={() => { this.handleInvites(this.state.task) }}>Add</Button></Col>
                             </Row>
                             <Form.Group style={{ marginTop: 20, }}>
@@ -167,7 +212,7 @@ class RoomPage extends React.Component {
                     <Button variant="outline-danger" onClick={this.handleClose}>
                         Close
                         </Button>
-                    <Button variant="outline-primary" onClick={this.handleClose}>
+                    <Button variant="outline-primary" onClick={this.handleSubmit}>
                         Create!
                         </Button>
                 </Modal.Footer>
@@ -179,15 +224,27 @@ class RoomPage extends React.Component {
     render() {
         // console.log(this.props)
         if (this.props.allRooms)
-            this.props.allRooms.forEach((roomObject, index) => {
+            this.props.allRooms.forEach((roomObject) => {
                 this.joinedRoomNames.push(roomObject.title)
             })
+        if (this.props.roomError && this.props.roomError.length !== 0) {
+            return (
+                <Alert onClose={() => this.props.setRoomError("")} dismissible variant="danger">
+                    <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
+                    <p>
+                        {this.props.roomError}
+                    </p>
+                </Alert>
+            )
+        }
+
 
         return (
             <LoadingOverlay
                 active={!this.props.isRoomLoaded || this.props.joiningNewRoom}
                 spinner
                 text="Retrieving the rooms that you are in..." >
+
                 <ul className="nav">
                     <li className="nav-item">
                         <div className="icon-section-auth">
@@ -195,7 +252,7 @@ class RoomPage extends React.Component {
                         </div>
                     </li>
                     <li className="navbar-brand">
-                        <Link to="/authenticate/signin" onCLick={this.logout}>Logout</Link>
+                        <Link to="/authenticate/signin" onClick={this.props.logout}>Logout</Link>
                     </li>
                 </ul>
 
@@ -267,6 +324,7 @@ const mapStateToProps = (state) => {
         allRooms: state.currentUser.allRooms,
         allPublicRooms: state.currentUser.allPublicRooms,
         joiningNewRoom: state.currentUser.joinPublicRoom,
+        roomError: state.currentUser.roomError
     }
 }
 
@@ -276,7 +334,10 @@ const mapDispatchToProps = (dispatch) => {
         getAllRoomsOfUser: () => { dispatch(getAllRoomsOfUser()) },
         initRoom: (roomName) => { dispatch(initRoom(roomName)) },
         getAllPublicRooms: () => { dispatch(getAllPublicRooms()) },
-        joinPublicRoom: (roomName) => { dispatch(joinPublicRoom(roomName)) }
+        joinPublicRoom: (roomName) => { dispatch(joinPublicRoom(roomName)) },
+        logout: () => { dispatch(logout()) },
+        createRoom: (roomData) => { dispatch(createRoom(roomData)) },
+        setRoomError: (errorMessage) => { dispatch(setRoomError(errorMessage)) }
     }
 }
 
