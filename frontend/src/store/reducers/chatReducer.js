@@ -23,7 +23,8 @@ import {
     CHAT_LOADING_DONE,
     INIT_USERS_CONVO,
     DIRECTS_LOADING_DONE,
-    INIT_ROOM
+    INIT_ROOM,
+    CHANNEL_UPDATE
 } from "../actionTypes";
 
 const initialState = {
@@ -105,6 +106,19 @@ const chatReducer = (state = initialState, action) => {
                 users: [],
                 isChatLoaded: false,
                 isDirectMessagesLoaded: false
+            }
+
+        case CHANNEL_UPDATE:
+            let oldChannels = state.channels;
+            let indx = oldChannels.forEach((chan, i) => {
+                if (action.oldName === chan.name) 
+                    return i;
+                })
+            oldChannels[indx].name = action.channelData.title
+            oldChannels[indx].description = action.channelData.description
+            return {
+                ...state,
+                channels: oldChannels
             }
 
         default:
