@@ -21,6 +21,13 @@ app.post("/rooms", auth,async (req,res,next)=>{
             channel.room=room._id
             await channel.save()
         }
+        console.log(req.user)
+        await req.body.invites.forEach(async (val)=>{
+            await sendEmail(val,{
+                sender:req.user.email,
+                roomName:room.title
+            })
+        })
         res.status(201).send(room)
     }
     catch(e){
@@ -110,13 +117,13 @@ app.post("/rooms/:title/leave", auth,async (req,res,next)=>{
 app.post("/rooms/:title/invite", roomowner, async (req,res,next)=>{
     try{
         var room= req.room
-        var to= req.user.email
+        var sender= req.user.email
         var roomName= room.title
         var sender=req.user.email
         room.invites= room.invites.concat(req.body)
         req.body.forEach(async (val)=>{
             await sendEmail(val,{
-                to,
+                sender,
                 roomName
             })
         })
@@ -211,7 +218,8 @@ app.get("/rooms/:title/members",roomMember ,async (req,res,next)=>{
                 status:room.members[i].status,
                 avatar:room.members[i].avatar,
                 lastSeen:room.members[i].lastSeen,
-                moderator:room.moderators.includes(room.members[i]._id)
+                moderator:room.moderators.includes(room.members[i]._id),
+                score:room.members[i].score
             })
         }
         res.send(members)

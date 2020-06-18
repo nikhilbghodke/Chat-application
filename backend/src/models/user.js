@@ -47,6 +47,10 @@ const schema= mongoose.Schema({
     lastSeen:{
         type:Date
     },
+    score:{
+        type:Number,
+        default:100
+    },
     isVerified:{
         type:Boolean,
         default:false

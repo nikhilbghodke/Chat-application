@@ -144,7 +144,8 @@ app.patch("/users", auth ,async (req,res,next)=>{
         var user =req.user
         const keys= Object.keys(req.body)
         keys.forEach((key)=>{
-            user[key]=req.body[key]
+            if(req.body[key])
+                user[key]=req.body[key]
         })
         //console.log(user)
         user=await user.save()

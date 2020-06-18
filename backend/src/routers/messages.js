@@ -111,6 +111,7 @@ try {
     var msg = await Message.findOne({
         _id:req.params.id
     })
+    
     //console.log(msg)
     if(req.room.moderators.includes(req.user._id))
     {
@@ -124,7 +125,12 @@ try {
             status:400,
             message:"You have already reported this message"
         })
+        await msg.populate("owner").execPopulate()
+    var sender= msg.owner
+    sender.score-=5;
+    await sender.save()
     msg.reports.push(req.user._id)
+    console.log(msg)
     if(msg.reports.length>5)
         msg.isReported=true
     await msg.save()

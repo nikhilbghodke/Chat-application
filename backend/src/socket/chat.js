@@ -80,10 +80,14 @@ io.on("connection",(socket)=>{
 		packet.username=socket.user.username
 		delete packet.token
 		const filter = new Filter()
-		if(filter.isProfane(packet.msg))
+		if(filter.isProfane(packet.msg)){
+			var user=socket.user
+			user.score-=5
+			await user.save()
 			return callback({
 				message:"Profanity not allowed"
 			})
+		}	
 		if(packet.channel)
 		{
 			var msg=await saveMessage(socket.user._id,socket.room._id,packet.channel,packet.msg,packet.type)
