@@ -175,16 +175,21 @@ app.delete("/rooms/:title", roomowner, async (req,res,next)=>{
 app.patch("/rooms/:title", roomowner, async (req, res,next)=>{
     try{
         var keys= Object.keys(req.body)
+        console.log(keys)
         for(key in keys){
             console.log(keys[key])
-            if(!req.body[keys[key]])
+            // if(keys[key]=="private")
+            //     continue
+            if(req.body[keys[key]]==null)
                 delete req.body[keys[key]]
         }
         var room =await Room.findOne({
             title:req.params.title
         })
+        console.log(req.body)
         var keys=Object.keys(req.body)
         keys.forEach((key)=>{
+            
             room[key]=req.body[key]
         })
         await room.save()
