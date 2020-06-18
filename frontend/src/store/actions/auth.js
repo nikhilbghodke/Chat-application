@@ -7,7 +7,9 @@ import {
   INIT_PUBLIC_ROOMS,
   PUBLIC_ROOMS_LOADED,
   JOINING_ROOM,
-  JOINED_ROOM
+  JOINED_ROOM,
+  ROOM_LOADING_START,
+  SET_ROOM_ERROR
 } from "../actionTypes";
 import { initRoom } from './chatActions';
 import { addError, removeError } from "./error";
@@ -26,6 +28,12 @@ export function setAllRoomsOfUser(allRooms) {
   return {
     type: SET_ALL_ROOMS,
     allRooms
+  }
+}
+
+export function roomLoadingStarted() {
+  return {
+    type: ROOM_LOADING_START
   }
 }
 
@@ -62,6 +70,13 @@ export function joinedRoom(roomObject) {
   }
 }
 
+export function setRoomError(errorMessage) {
+  return {
+    type: SET_ROOM_ERROR,
+    errorMessage
+  }
+}
+
 // ACTIONS CREATERS DONE
 
 export function setAuthorizationToken(token) {
@@ -70,6 +85,7 @@ export function setAuthorizationToken(token) {
 
 //function for logout
 export function logout() {
+  console.log("LOGOUT")
   return dispatch => {
     localStorage.clear();
     setAuthorizationToken(false);
@@ -135,7 +151,7 @@ export function getCurrentUser() {
   }
 }
 
-
+// ROOMS 
 
 export function getAllRoomsOfUser() {
   return dispatch => {
@@ -191,8 +207,8 @@ export function joinPublicRoom(roomName) {
 
 //Channel api 
 export function updateChannel(channelData) {
- const title = channelData.roomname;
- const name =channelData.channelname;
+  const title = channelData.roomname;
+  const name = channelData.channelname;
   return dispatch => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -209,11 +225,11 @@ export function updateChannel(channelData) {
     });
   };
 }
-export function deleteChannel(title,name) {
+export function deleteChannel(title, name) {
   return dispatch => {
     return new Promise(async (resolve, reject) => {
       try {
-        const channel = await apiCall("delete", `${serverBaseURL}/room/${title}/channels/${name}`,null);
+        const channel = await apiCall("delete", `${serverBaseURL}/room/${title}/channels/${name}`, null);
         dispatch(removeError());
         resolve();
       }
@@ -227,11 +243,83 @@ export function deleteChannel(title,name) {
 }
 export function createChannel(channelData) {
   const title = channelData.roomname;
+  return dispatch => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const channel = await apiCall("post", `${serverBaseURL}/channels/${title}`, channelData);
+        console.log(channel)
+        dispatch(removeError());
+        resolve();
+      }
+      catch (err) {
+        console.log(err);
+        dispatch(addError(err.message));
+        reject();
+      }
+    });
+  };
+}
+
+//room api
+export function updateRoom(roomData) {
+  const title = roomData.roomname;
+  return dispatch => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const room = await apiCall("patch", `${serverBaseURL}/rooms/${title}`, roomData);
+        console.log(room)
+        dispatch(removeError());
+        resolve();
+      }
+      catch (err) {
+        console.log(err);
+        dispatch(addError(err.message));
+        reject();
+      }
+    });
+  };
+}
+export function deleteRoom(title) {
+  return dispatch => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const channel = await apiCall("delete", `${serverBaseURL}/rooms/${title}`, null);
+        dispatch(removeError());
+        resolve();
+      }
+      catch (err) {
+        console.log(err);
+        dispatch(addError(err.message));
+        reject();
+      }
+    });
+  };
+}
+
+export function createRoom(roomData) {
+  return dispatch => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        dispatch(roomLoadingStarted())
+        await apiCall("post", `${serverBaseURL}/rooms/`, roomData);
+        dispatch(getAllRoomsOfUser());
+        dispatch(roomLoadingComplete())
+        resolve();
+      }
+      catch (err) {
+        console.log(err)
+        dispatch(roomLoadingComplete())
+        dispatch(setRoomError(err.message))
+        reject();
+      }
+    })
+  }
+}
+export function makeModerator(title,username) {
    return dispatch => {
      return new Promise(async (resolve, reject) => {
        try {
-         const channel = await apiCall("post", `${serverBaseURL}/channels/${title}`, channelData);
-         console.log(channel)
+         const moderator = await apiCall("post", `${serverBaseURL}/room/${title}/moderator/${username}`,null);
          dispatch(removeError());
          resolve();
        }
@@ -244,38 +332,3 @@ export function createChannel(channelData) {
    };
  }
 
- //room api
- export function updateRoom(roomData) {
-  const title = roomData.roomname;
-   return dispatch => {
-     return new Promise(async (resolve, reject) => {
-       try {
-         const room = await apiCall("patch", `${serverBaseURL}/rooms/${title}`, roomData);
-         console.log(room)
-         dispatch(removeError());
-         resolve();
-       }
-       catch (err) {
-         console.log(err);
-         dispatch(addError(err.message));
-         reject();
-       }
-     });
-   };
- }
- export function deleteRoom(title) {
-  return dispatch => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const channel = await apiCall("delete", `${serverBaseURL}/rooms/${title}`,null);
-        dispatch(removeError());
-        resolve();
-      }
-      catch (err) {
-        console.log(err);
-        dispatch(addError(err.message));
-        reject();
-      }
-    });
-  };
-}

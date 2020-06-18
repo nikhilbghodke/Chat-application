@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import "./edit.css"
 import { updateChannel, deleteChannel, createChannel, updateRoom, deleteRoom } from '../../../store/actions/auth';
-
+import People from "./people"
 
 class Edit extends Component {
   constructor(props) {
@@ -46,19 +46,18 @@ class Edit extends Component {
   channelList = () => {
     if (this.props.channels) {
       return this.props.channels.map((channelObject, index) => {
-        return <div className="input-group mb-3">
-          <input type="text" className="form-control" name={channelObject.name}
+        return <div className="input-group mb-3" id="rch">
+          <input type="text" className="form-control rounded" name={channelObject.name}
             placeholder={channelObject.name} onChange={this.handleChange}
           ></input>
           <div className="input-group">
             <div className="input-group-prepend">
-              <span className="input-group-text">Description</span>
+              <span className="input-group-text rounded">Description</span>
             </div>
-            <textarea className="form-control" placeholder={channelObject.description} onChange={this.handleDescription}></textarea>
+            <textarea className="form-control rounded" placeholder={channelObject.description} onChange={this.handleDescription}></textarea>
           </div>
-          <button className="btn btn-info border" type="button" onClick={this.handleChannelUpdate}>Update</button>
-          <button className="btn btn-info border" type="button" onClick={this.handleChannelDelete}>Delete</button>
-
+          <button className="btn btn-info border rounded-pill " type="button" onClick={this.handleChannelUpdate}>Update</button>
+          <button className="btn btn-info border rounded-pill " type="button" onClick={this.handleChannelDelete}>Delete</button>
         </div>
       })
     }
@@ -75,47 +74,43 @@ class Edit extends Component {
     this.props.deleteRoom(this.state.roomname)
   }
 
-  roomList = () => {
-    return this.props.allRooms.filter((obj) => {
-      return obj["title"] === this.props.roomName
-    })
-  }
+ 
   render() {
-    const { title, description, owner } = this.roomList()[0]
+    const { title, description, owner } = this.props.currentRoom
     if (this.props.userid === owner) {
       return (
         <div className="mainbody">
-          <form >
+          <form className="formchannel" >
             <h4>Edit Your Channels</h4>
             {this.channelList()}
             <br />
             <h4>Create new Channel!</h4>
-            <div className="input-group mb-3">
-              <input type="text" className="form-control" name="title"
+            <div className="input-group mb-3 " id="ch">
+              <input type="text" className="form-control rounded" name="title"
                 placeholder="Channel name" onChange={this.handleChange}
                 required></input>
               <div className="input-group">
                 <div className="input-group-prepend">
-                  <span className="input-group-text">Description</span>
+                  <span className="input-group-text rounded">Description</span>
                 </div>
-                <textarea className="form-control" placeholder="Enter Description here" onChange={this.handleDescription}></textarea>
+                <textarea className="form-control rounded" placeholder="Enter Description here" onChange={this.handleDescription}></textarea>
               </div>
-              <button className="btn btn-info border" type="button" onClick={this.handleCreate}>Create</button>
+              <button className="btn btn-info border rounded-pill " type="button" onClick={this.handleCreate}>Create</button>
             </div>
           </form>
           <hr />
-          <form>
+          <form className="formroom">
             <h4>Edit Your Room</h4>
-            <div className="input-group mb-3">
-              <input type="text" className="form-control" placeholder={title} onChange={this.handleChange} required></input>
+            <div className="input-group mb-3 " id="rh">
+              <input type="text" className="form-control rounded" placeholder={title} onChange={this.handleChange} required></input>
               <div className="input-group">
                 <div className="input-group-prepend">
                   <span className="input-group-text">Description</span>
                 </div>
-                <textarea className="form-control" placeholder={description} onChange={this.handleDescription}></textarea>
+                <textarea className="form-control rounded" placeholder={description} onChange={this.handleDescription}></textarea>
               </div>
-              <button className="btn btn-info border" type="button" onClick={this.handleRoomUpdate}>Update</button>
-              <button className="btn btn-info border" type="button" onClick={this.handleRoomDelete}>Delete</button>
+              <button className="btn btn-info border rounded-pill " type="button" onClick={this.handleRoomUpdate}>Update</button>
+              <button className="btn btn-info border rounded-pill " type="button" onClick={this.handleRoomDelete}>Delete</button>
             </div>
           </form>
         </div>
@@ -135,8 +130,6 @@ const mapStateToProps = (state) => {
   return {
     roomName: state.chatReducer.roomName,
     channels: state.chatReducer.channels,
-    allRooms: state.currentUser.allRooms,
-    userid: state.currentUser.user._id
   }
 }
 const mapDispatchToProps = (dispatch) => {
