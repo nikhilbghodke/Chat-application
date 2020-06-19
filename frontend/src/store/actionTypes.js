@@ -25,3 +25,7 @@ export const SET_ROOM_ERROR = "SET_ROOM_ERROR";
 export const MEMBERS = "MEMBERS";
 
 export const CHANNEL_UPDATE = "CHANNEL_UPDATE"
+export const CHANNEL_DELETE = "CHANNEL_DELETE"
+export const CHANNEL_CREATE = "CHANNEL_CREATE"
+export const ROOM_DELETE = "ROOM_DELETE"
+export const ROOM_UPDATE = "ROOM_UPDATE"

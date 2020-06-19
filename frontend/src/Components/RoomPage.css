@@ -64,6 +64,11 @@ i{
   font-weight:500;
 }
 
+#log{
+  color: white;
+}
+
+
 .form-submit {
     margin: 0 auto;
     width: 40%;

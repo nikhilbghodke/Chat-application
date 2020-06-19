@@ -5,6 +5,7 @@ import { serverBaseURL } from "../../../services/api"
 import Axios from 'axios';
 import {updateUser} from "../../../store/actions/auth"
 import { removeError } from "../../../store/actions/error";
+import { withRouter } from 'react-router-dom';
 
 class Dashboard extends Component {
   constructor(props) {
@@ -46,7 +47,9 @@ fileUpload = e =>{
     const { username, status} = this.state
     const {avatar}=this.props.currentUser.user
     const urlimg = serverBaseURL + "/" + avatar
-      //this.props.removeError();
+    this.props.history.listen(() => {
+      removeError();
+    });
     return (
       <div class="container">
         <br />
@@ -72,6 +75,9 @@ fileUpload = e =>{
                   <h2>Edit your profile.<small>It's always easy</small></h2>
                   <br/>
                   <br/>
+                  {this.props.error.message && (
+                <div className="alert alert-danger" role="alert">{this.props.error.message}</div>
+              )}
                   <div class="form-group">
                     <input
                       type="text" name="username"
@@ -120,14 +126,13 @@ fileUpload = e =>{
 const mapStateToProps = (state) => {
   return {
     currentUser: state.currentUser,
-    errors: state.errors
+    error: state.errors
   }
 }
 const mapDispatchToProps = (dispatch) => {
   return {
       updateUser: (data) => { dispatch(updateUser(data))},
-      removeError
   }
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(Dashboard)
+export default withRouter(connect(mapStateToProps,mapDispatchToProps)(Dashboard))

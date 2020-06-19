@@ -14,9 +14,9 @@ import {
 const DEFAULT_STATE = {
   isAuthenticated: false, // hopefully be true, when logged in
   user: {}, // all the user info when logged in
-  allRooms: [],
+  allRooms: [], // All joined rooms
   isRoomLoaded: false,
-  allPublicRooms: [],
+  allPublicRooms: [], // All rooms (public/private) in DB
   publicRoomsLoaded: false,
   joiningNewRoom: false,
   roomError: "",

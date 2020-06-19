@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import LoadingOverlay from 'react-loading-overlay';
-import { getMembers ,removeUser} from '../../../store/actions/chatActions'
-import { makeModerator} from '../../../store/actions/auth'
+import { getMembers, removeUser } from '../../../store/actions/chatActions'
+import { makeModerator } from '../../../store/actions/auth'
 import { connect, ReactReduxContext } from 'react-redux';
 import { serverBaseURL } from "../../../services/api"
 import Table from '@material-ui/core/Table';
@@ -10,7 +10,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Paper from '@material-ui/core/Paper';
+import { removeError } from "../../../store/actions/error";
 import './people.css'
 
 class People extends Component {
@@ -21,18 +21,28 @@ class People extends Component {
     this.props.getMembers(this.props.currentRoom.title)
   }
 
-  handleClick = e =>{
-    this.props.removeUser(this.props.currentRoom.title,e.target.name)
+  callback = () => {
+    this.props.getMembers(this.props.currentRoom.title)
   }
-  handleMod = e =>{
-  this.props.makeModerator(this.props.currentRoom.title,e.target.name)
+
+  handleClick = e => {
+    this.props.removeUser(this.props.currentRoom.title, e.target.name, this.callback)
+    
+  }
+  handleMod = e => {
+    this.props.makeModerator(this.props.currentRoom.title, e.target.name, this.callback)
   }
 
   render() {
-    
-    if(this.props.members)
+    this.props.history.listen(() => {
+      removeError();
+    });
+    if (this.props.members[0])
       return (
         <div className="mainbody">
+          {this.props.error.message && (
+            <div className="alert alert-danger" role="alert">{this.props.error.message}</div>
+          )}
           <br />
           <br />
           <TableContainer >
@@ -43,31 +53,33 @@ class People extends Component {
                   <TableCell align="right">Avatar</TableCell>
                   <TableCell align="right">Status</TableCell>
                   <TableCell align="right">Points</TableCell>
-                  
-                  {this.props.currentRoom.owner===this.props.userid &&
-                  <b><TableCell align="right">Moderator</TableCell>
-                  <TableCell align="right">Remove</TableCell></b>}
+                  {this.props.currentRoom.owner === this.props.userid &&
+                    <TableCell align="right">Moderator</TableCell>}
+                    {this.props.currentRoom.owner === this.props.userid &&
+                      <TableCell align="right">Remove</TableCell>}
                 </TableRow>
               </TableHead>
               <TableBody>
                 {this.props.members.map((member) => (
                   <TableRow key={member._id}>
                     <TableCell component="th" scope="row">{member.username}</TableCell>
-                    <TableCell align="right"><img src={serverBaseURL + '/' + member.avatar} className="imgs"/></TableCell>
+                    <TableCell align="right"><img src={serverBaseURL + '/' + member.avatar} className="imgs" /></TableCell>
                     <TableCell align="right">{member.status}</TableCell>
                     <TableCell align="right">{member.score}</TableCell>
-                    
-                      {this.props.currentRoom.owner===this.props.userid &&
-                      <i><TableCell align="right">
-                      {!member.moderator &&
-                      <button className="btn btn-info" id="mod" name={member.username} onClick={this.handleMod}>Make</button>
-                      }
-                      {member.moderator &&
-                        <p>Moderator</p>
-                      }
-                      </TableCell> 
-                  <TableCell align="right">
-                    <button className="btn btn-info" name={member._id} onClick={this.handleClick}>Remove</button></TableCell></i>}
+
+                    {this.props.currentRoom.owner === this.props.userid &&
+                      <TableCell align="right">
+                        {!member.moderator &&
+                          <button className="btn btn-info" id="mod" name={member.username} onClick={this.handleMod}>Make</button>
+                        }
+                        {member.moderator &&
+                          <p>Moderator</p>
+                        }
+                      </TableCell>
+                    }
+                    {this.props.currentRoom.owner === this.props.userid &&
+                      <TableCell align="right">
+                        <button className="btn btn-info" name={member._id} onClick={this.handleClick}>Remove</button></TableCell>}
                   </TableRow>
                 ))}
               </TableBody>
@@ -92,13 +104,13 @@ class People extends Component {
 const mapDispatchToProps = (dispatch) => {
   return {
     getMembers: (data) => { dispatch(getMembers(data)) },
-    removeUser : (title,data) => { dispatch(removeUser(title,data)) },
-    makeModerator : (title,data) => { dispatch(makeModerator(title,data)) },
+    removeUser: (title, data,func) => { dispatch(removeUser(title, data,func)) },
+    makeModerator: (title, data,func) => { dispatch(makeModerator(title, data,func)) },
   }
 }
 const mapStateToProps = (state) => {
   return {
-    errors: state.errors,
+    error: state.errors,
     members: state.currentUser.members
   }
 }

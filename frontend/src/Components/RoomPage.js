@@ -135,8 +135,10 @@ class RoomPage extends React.Component {
     }
   }
 
-  logout = e => {
+  handlelogout = e => {
     e.preventDefault();
+    console.log("called logout")
+    this.props.history.push("/authenticate/signin")
     this.props.logout();
   };
 
@@ -232,7 +234,7 @@ class RoomPage extends React.Component {
     if (this.props.allRooms)
       this.props.allRooms.forEach((roomObject) => {
         if (!this.joinedRoomNames.includes(roomObject.title))
-        this.joinedRoomNames.push(roomObject.title)
+          this.joinedRoomNames.push(roomObject.title)
       })
 
     if (this.props.roomError && this.props.roomError.length !== 0) {
@@ -260,10 +262,11 @@ class RoomPage extends React.Component {
             </div>
           </li>
           <li className="navbar-brand">
-            <Link to="/authenticate/signin" onClick={this.props.logout}>Logout</Link>
+            <button type="button" id="log" class="btn btn-link" data-toggle="tooltip" data-placement="bottom" title="Logout" onClick={this.handlelogout}>
+              {this.props.username}
+            </button>
           </li>
         </ul>
-
         <div className="roompage">
 
           <div className="form2">
@@ -290,8 +293,8 @@ class RoomPage extends React.Component {
                 {/* <li className="list-group-item list-group-item-action rounded border border-dark">Cras justo odio </li> */}
                 {this.roomList()}
               </div>
-              <br/>
-             <b> <p className="form-bottom-text">
+              <br />
+              <b> <p className="form-bottom-text">
                 Don't have a room yet?
                <a
                   href="#"
@@ -320,7 +323,8 @@ const mapStateToProps = (state) => {
     allRooms: state.currentUser.allRooms,
     allPublicRooms: state.currentUser.allPublicRooms,
     joiningNewRoom: state.currentUser.joinPublicRoom,
-    roomError: state.currentUser.roomError
+    roomError: state.currentUser.roomError,
+    username: state.currentUser.user.username
   }
 }
 

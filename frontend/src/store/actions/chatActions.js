@@ -147,7 +147,7 @@ export function getMembers(roomName) {
         })
     }
 }
-export function removeUser(title,name) {
+export function removeUser(title,name, callback) {
     console.log(name)
     console.log(title)
     return dispatch => {
@@ -155,6 +155,7 @@ export function removeUser(title,name) {
         try {
           const members = await apiCall("get", `${serverBaseURL}/rooms/${title}/kick/${name}`,null);
           dispatch(removeError());
+          callback();
           resolve();
         }
         catch (err) {
