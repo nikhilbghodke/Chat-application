@@ -95,3 +95,36 @@
     display: flex;
     flex-direction: row;
 }
+@media (max-width: 575.98px) { 
+    .content-right{
+        margin-left: auto !important;
+        margin-top:30% !important;
+        text-align: center !important;
+    }
+    .title-description pre{
+        font-size:1.1rem !important;
+        color:#ccece8;
+        
+    }
+    .welcome-background{
+        background-image: url(../Assests/Images/leftImage.png) !important;
+        background-repeat: no-repeat !important;
+        background-size: cover !important;
+        color: whitesmoke !important;
+      }
+      .content-right p {
+          font-size: 2rem;
+          
+      }
+      .button-section{
+          margin-top: 2rem !important;
+          margin-left: 10% !important;
+      }
+      button{
+        width:120px !important;
+    
+        text-align:center !important;
+        line-height:1.1em !important;
+        font-size:1.1em !important;
+      }
+}

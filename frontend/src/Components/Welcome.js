@@ -4,7 +4,7 @@ import FooterIcon from '../Assests/Images/single-icon.png';
 import FacebookIcon from '../Assests/Images/facebook.png';
 import TwitterIcon from '../Assests/Images/twitter.png';
 import './Welcome.css'
-
+import 'bootstrap/dist/css/bootstrap.min.css';
 // export default function Welcome () {
 //     return (
 //         <div className="welcome-background">
@@ -16,7 +16,7 @@ import './Welcome.css'
 // }
 export default function Welcome(props) {
     return (
-        <div className="welcome-background">
+        <div className="welcome-background container-fluid">
             <div className="icon-section-welcome">
                 <img src={Icon} alt="icon" className="icon" onClick={() => alert("ICON")}/>
             </div>
@@ -38,9 +38,9 @@ export default function Welcome(props) {
                 </div>
                 <br />
                 <div className="button-section">
-                    <button type="button" onClick={() => props.history.push("/authenticate/signup")}>Create your own account</button>
+                    <button type="button" className="btn" onClick={() => props.history.push("/authenticate/signup")}>Create your account</button>
                     <div className="spacer"></div>
-                    <button type="button" onClick={() => props.history.push("/authenticate/signin")}>Sign in to your account</button>
+                    <button type="button" className="btn" onClick={() => props.history.push("/authenticate/signin")}>Sign in to your account</button>
                 </div>
             </div>
             {/* <div className="background-image-section">

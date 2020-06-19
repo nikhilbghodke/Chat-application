@@ -41,8 +41,9 @@ function AuthenticationPage(props) {
 
 
     return (
-        <div className="auth-page">
-            <div className="left">
+        <div className="auth-page container-fluid">
+            <div className="row">
+            <div className="left col-md-6">
                 <div className="icon-section-auth">
                     <img src={Icon} alt="icon" className="icon" onClick={() => alert("ICON")} />
                 </div>
@@ -55,12 +56,12 @@ function AuthenticationPage(props) {
                     </p>
                 </div>
             </div>
-            <div className="right">
+            <div className="right col-md-6">
                 {component}
             </div>
-            <div className="footer">
+            <div className="footer col-12">
                 <div className="bottom-icon">
-                    <img src={FooterIcon} alt="footer-icon"/>
+                    <img src={FooterIcon} alt="footer-icon" className="img-fluid"/>
                 </div>
                 <div className="spacer"></div>
                 <div className="footer-contents">
@@ -74,6 +75,7 @@ function AuthenticationPage(props) {
                         <img src={TwitterIcon} alt="twitter-icon "/>
                     </div>
                 </div>
+            </div>
             </div>
         </div>
     )
