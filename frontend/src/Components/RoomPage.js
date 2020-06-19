@@ -18,10 +18,8 @@ import {
 import { initRoom } from '../store/actions/chatActions'
 import { logout } from '../store/actions/auth'
 import { setTokenHeader } from '../services/api';
-import CreateRoom from './roomPopUp';
 
 import Icon from '../Assests/Images/icon-logo-2.png'
-import Profile from '../Assests/Images/acc.png'
 import searchIcon from "../Assests/Images/search-icon.png";
 
 import './RoomPage.css'
@@ -143,8 +141,10 @@ class RoomPage extends React.Component {
   };
 
   publicRoomList = () => {
+    console.log(this.joinedRoomNames)
     if (this.props.allPublicRooms) {
       return this.props.allPublicRooms.map((roomObject, index) => {
+        console.log(roomObject.title)
         if (!this.joinedRoomNames.includes(roomObject.title))
           return <button id="proomlistdisp"
             key={index}
@@ -228,10 +228,13 @@ class RoomPage extends React.Component {
 
   render() {
     // console.log(this.props)
+
     if (this.props.allRooms)
       this.props.allRooms.forEach((roomObject) => {
+        if (!this.joinedRoomNames.includes(roomObject.title))
         this.joinedRoomNames.push(roomObject.title)
       })
+
     if (this.props.roomError && this.props.roomError.length !== 0) {
       return (
         <Alert onClose={() => this.props.setRoomError("")} dismissible variant="danger">

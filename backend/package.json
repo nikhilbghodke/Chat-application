@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "sudo npm i pino-tee -g && node src/index.js | pino-tee warn ./warn-logs > ./all-log"
+    "start": "npm i pino-tee -g && node src/index.js | pino-tee warn ./warn-logs > ./all-log"
   },
   "keywords": [],
   "author": "",

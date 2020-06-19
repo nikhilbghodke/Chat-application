@@ -79,12 +79,13 @@ export function setRoomError(errorMessage) {
   }
 }
 
-export function setChannel(oldName,channelData) {
+export function setChannel(oldName, newName, newDescription) {
   console.log("setChannel")
   return {
     type: CHANNEL_UPDATE,
     oldName,
-    channelData
+    newName,
+    newDescription
   };
 }
 
@@ -219,13 +220,16 @@ export function joinPublicRoom(roomName) {
 //Channel api 
 export function updateChannel(channelData) {
   const title = channelData.roomname;
-  const name = channelData.channelname;
-  console.log(name)
+  const oldName = channelData.channelname;
+  const newName = channelData.title;
+  const newDescription = channelData.description;
   return dispatch => {
     return new Promise(async (resolve, reject) => {
       try {
-        const channel = await apiCall("patch", `${serverBaseURL}/room/${title}/channels/${name}`, channelData);
-        dispatch(setChannel(name,channel))
+        console.log(channelData)
+        const channel = await apiCall("patch", `${serverBaseURL}/room/${title}/channels/${oldName}`, channelData);
+        // A new action is dispatched for updating the channel within the redux
+        dispatch(setChannel(oldName, newName, newDescription))
         dispatch(removeError());
         resolve();
       }
