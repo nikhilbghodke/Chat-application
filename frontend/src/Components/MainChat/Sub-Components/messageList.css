@@ -1,0 +1,18 @@
+#drop{
+    outline: none;
+    width: 0.2px;
+    height:0.5px;
+    background-color:brown;
+    align-content: flex-start;
+    margin-top: 0.2em;
+    margin-left: 0.2rem;
+    display: flex;
+    border: none;
+    
+}
+
+#menuitem{
+    width: fit-content;
+    height:fit-content;
+    background-color:aliceblue;
+}

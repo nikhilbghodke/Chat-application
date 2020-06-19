@@ -6,10 +6,11 @@ import { ButtonGroup } from 'react-bootstrap';
 import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
 import { connect } from 'react-redux'
 import { downloadFile } from '../../../store/actions/chatActions';
+import "./messageList.css"
 var fileDownload = require('js-file-download');
 
-function TextMessage(props) {
 
+function TextMessage(props) {
     const [hover, setHover] = React.useState(false);
 
     function toggleHover() {
@@ -29,10 +30,9 @@ function TextMessage(props) {
     }
 
     const DropdownElement = () => (
-        <Dropdown as={ButtonGroup}>
-            <Dropdown.Toggle split variant="success" id="dropdown-split-basic" size="sm" />
-
-            <Dropdown.Menu>
+        <Dropdown>
+            <Dropdown.Toggle  id="drop" ></Dropdown.Toggle>
+            <Dropdown.Menu id="menuitem">
                 <Dropdown.Item onClick={() => { console.log("Report!") }}>Report</Dropdown.Item>
             </Dropdown.Menu>
         </Dropdown>
