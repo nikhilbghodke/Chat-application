@@ -6,10 +6,11 @@ import {
     INIT_USERS_CONVO,
     DIRECTS_LOADING_DONE,
     INIT_ROOM,
-    MEMBERS
+    MEMBERS,
 } from '../actionTypes';
 import { serverBaseURL, apiCall, setTokenHeader } from '../../services/api'
 import { addError, removeError } from "./error";
+import axios from 'axios'
 
 export function addNewMessage(message, typeOfConversation, conversationName) {
     return {
@@ -61,9 +62,9 @@ export function initRoom(roomName) {
     }
 }
 
-export function roomMembers(members){
+export function roomMembers(members) {
     return {
-        type:MEMBERS,
+        type: MEMBERS,
         members
     }
 }
@@ -130,10 +131,55 @@ export function getAllDirectMessages(roomName) {
         })
     }
 }
+
+export function uploadFile(file, fileName, callback) {
+    let formData = new FormData();
+    formData.append('avatar', file, fileName)
+    return dispatch => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await apiCall("POST", serverBaseURL + `/upload`, formData);
+                callback(response.address);
+                resolve();
+            }
+            catch (error) {
+                alert(error.message);
+                dispatch(addError(error.message));
+                reject();
+            }
+        })
+    }
+}
+
+export function downloadFile(fileAddress, callback) {
+    const token = localStorage.jwtToken
+    const data = { address: fileAddress }
+    const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+    }
+    return dispatch => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const file = await axios.post(serverBaseURL + '/download', data, {
+                    headers: headers
+                  })
+                callback(file);
+                resolve();
+            }
+            catch (error) {
+                alert(error.message);
+                dispatch(addError(error.message));
+                reject();
+            }
+        })
+    }
+}
+
 export function getMembers(roomName) {
     return dispatch => {
         return new Promise((resolve, reject) => {
-            return apiCall("get", `${serverBaseURL}/rooms/${roomName}/members`,null)
+            return apiCall("get", `${serverBaseURL}/rooms/${roomName}/members`, null)
                 .then((members) => {
                     dispatch(roomMembers(members))
                     dispatch(removeError())
@@ -165,4 +211,4 @@ export function removeUser(title,name, callback) {
         }
       });
     };
-  }
+}

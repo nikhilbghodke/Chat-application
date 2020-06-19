@@ -19,6 +19,8 @@ export const JOINING_ROOM = "JOINING_ROOM";
 export const JOINED_ROOM = "JOINED_ROOM";
 export const ROOM_LOADING_START = "ROOM_LOADING_START";
 export const SET_ROOM_ERROR = "SET_ROOM_ERROR";
+// export const UPLOAD_FILE = "UPLOAD_FILE";
+// export const DOWLOAD_FILE = "DOWNLOAD_FILE";
 
 /*****Get Members */
 

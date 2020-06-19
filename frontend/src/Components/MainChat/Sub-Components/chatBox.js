@@ -1,11 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import CodeSnippetModel from './codeSnippetModal';
 import Prism from 'prismjs'
 
+import fileSelectModel from './fileSelectModal';
+import CodeSnippetModel from './codeSnippetModal';
 import NewMessageComponent from './newMessage';
 import MessageList from './messageList';
-import { addNewMessage, } from '../../../store/actions/chatActions';
+import { addNewMessage, uploadFile } from '../../../store/actions/chatActions';
+import FileSelectModal from './fileSelectModal';
 
 
 class ChatBox extends React.Component {
@@ -120,6 +122,30 @@ class ChatBox extends React.Component {
         Prism.highlightAll();
     }
 
+    sendFile = (file) => {
+        console.log("SEND FILE")
+        console.log(file)
+        this.props.uploadFile(file, file.name, (fileAddress) => {
+            console.log(fileAddress)
+            const message = {   // For the store
+                content: fileAddress,
+                owner: { username: this.props.currentUser },
+                createdAt: new Date(Date.now()).toISOString(),
+                type: "file/" + file.name
+            }
+            let nameOfConversation = "";
+            // Send the message through socket
+            if (this.props.currentConversation[0] === "channels") {
+                nameOfConversation = this.props.currentConversation[1].name
+                this.props.sendMessage(fileAddress, nameOfConversation, true, "file/" + file.name)
+            } else {
+                nameOfConversation = this.props.currentConversation[1].name
+                this.props.sendMessage(fileAddress, nameOfConversation, false, "file/" + file.name)
+            }
+            this.props.addNewMessage(message, this.props.currentConversation[0], nameOfConversation)
+        })
+    }
+
     render() {
         // console.log(this.props)
         let title = "";
@@ -160,8 +186,10 @@ class ChatBox extends React.Component {
                         sendOnClick={this.addNewMessage}
                         sendLocation={this.sendLocation}
                         toggleCodePopUp={this.toggleCodePopUp}
+                        toggleFilePopUp={this.toggleFilePopUp}
                     />
                 </div>
+                <FileSelectModal filePopUpOpen={this.state.filePopUpOpen} toggleFilePopUp={this.toggleFilePopUp} sendFile={this.sendFile} />
                 <CodeSnippetModel codePopUpOpen={this.state.codePopUpOpen} toggleCodePopUp={this.toggleCodePopUp} sendCode={this.sendCode} />
             </div>
         )
@@ -177,6 +205,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         addNewMessage: (message, typeOfConversation, conversationName) => { dispatch(addNewMessage(message, typeOfConversation, conversationName)) },
+        uploadFile: (file, fileName, callback) => { dispatch(uploadFile(file, fileName, callback)) }
     }
 }
 

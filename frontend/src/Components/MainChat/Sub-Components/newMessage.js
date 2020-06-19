@@ -67,7 +67,7 @@ function NewMessageComponent(props) {
                         <ListItem button onClick={sendLocation}>
                             <ListItemText primary="Send Location"  />
                         </ListItem>
-                        <ListItem button>
+                        <ListItem button onClick={() => {handleClose(); props.toggleFilePopUp()}}>
                             <ListItemText primary="Send file" />
                         </ListItem>
                         <ListItem button onClick={() => {handleClose(); props.toggleCodePopUp()}}>

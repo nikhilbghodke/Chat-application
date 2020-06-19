@@ -3,6 +3,10 @@ import { Scrollbars } from "react-custom-scrollbars";
 import Prism from 'prismjs';
 import Dropdown from 'react-bootstrap/Dropdown'
 import { ButtonGroup } from 'react-bootstrap';
+import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
+import { connect } from 'react-redux'
+import { downloadFile } from '../../../store/actions/chatActions';
+var fileDownload = require('js-file-download');
 
 function TextMessage(props) {
 
@@ -26,13 +30,19 @@ function TextMessage(props) {
 
     const DropdownElement = () => (
         <Dropdown as={ButtonGroup}>
-            <Dropdown.Toggle split variant="success" id="dropdown-split-basic" size="sm"/>
+            <Dropdown.Toggle split variant="success" id="dropdown-split-basic" size="sm" />
 
             <Dropdown.Menu>
-                <Dropdown.Item onClick={() => {console.log("Report!")}}>Report</Dropdown.Item>
+                <Dropdown.Item onClick={() => { console.log("Report!") }}>Report</Dropdown.Item>
             </Dropdown.Menu>
         </Dropdown>
     )
+
+    const fileDownloaded = (file, fileName) => {
+        console.log("HEY");
+        console.log(file);
+        fileDownload(file, fileName);
+    }
 
     return (
         <div className="message" key={props.keyValue} >
@@ -47,7 +57,7 @@ function TextMessage(props) {
                     "message-area" +
                     (props.messageObject.owner === props.currentUser
                         ? " current-user"
-                        : " other-user") + (props.messageObject.type.includes('code') ? " code-area" : "")
+                        : " other-user") + (props.messageObject.type.includes('code') ? " code-area" : "") + (props.messageObject.type.includes('file') ? " file-area" : "")
                 }
             >
                 <div className="message-user" >
@@ -71,9 +81,21 @@ function TextMessage(props) {
                             className="static-map"
                         ></img>
                     </div>
-                ) : (
-                            <div className="message-content "><pre><code className={"language-" + props.messageObject.type.split("/")[1].toLowerCase()}>{`${props.messageObject.content}`}</code></pre></div>
-                        )}
+                ) : props.messageObject.type.includes('code') ?
+                            (
+                                <div className="message-content "><pre><code className={"language-" + props.messageObject.type.split("/")[1].toLowerCase()}>{`${props.messageObject.content}`}</code></pre></div>
+                            ) : (   // It is file
+                                <div
+                                    className="message-content"
+                                    onClick={() => {
+                                        props.downloadFile(props.messageObject.content, (file) => {
+                                            fileDownloaded(file, props.messageObject.type.split("/")[1])
+                                        })
+                                    }}
+                                ><GetAppRoundedIcon />{props.messageObject.type.split("/")[1]}</div>
+                            )
+
+                }
                 <div className="message-time">{props.messageObject.time}</div>
             </div>
         </div>
@@ -117,6 +139,7 @@ class MessageList extends React.Component {
                             keyValue={index}
                             messageObject={messageObject}
                             currentUser={this.props.currentUser}
+                            downloadFile={this.props.downloadFile}
                         />
                     );
                 })}
@@ -125,4 +148,10 @@ class MessageList extends React.Component {
     }
 }
 
-export default MessageList;
+const MapDispatchToProps = (dispatch) => {
+    return {
+        downloadFile: (fileAddress, callback) => { dispatch(downloadFile(fileAddress, callback)) }
+    }
+}
+
+export default connect(null, MapDispatchToProps)(MessageList);

@@ -34,7 +34,7 @@ app.post('/upload', auth,async function (req, res) {
     })
   })
 
-app.get("/download", auth, async function(req,res,next){
+app.post("/download", auth, async function(req,res,next){
     var file=path.join(__dirname,"../../uploads/"+req.body.address)
     res.sendFile(file)
 })
