@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { Provider } from "react-redux";
+
 import { configureStore } from "../src/store";
 import { setAuthorizationToken, setCurrentUser } from "../src/store/actions/auth";
 import Welcome from './Components/Welcome'
@@ -8,6 +9,8 @@ import NotFound from './Components/404Error'
 import AuthenticationPage from './Components/AuthenticationPage'
 import RoomPage from './Components/RoomPage';
 import MainChatWindow from './Components/MainChat/mainChatWindow';
+
+import './prism.css';
 import './App.css';
 
 const store = configureStore();

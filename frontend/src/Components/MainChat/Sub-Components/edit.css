@@ -51,4 +51,14 @@ textarea{
     text-align: center;
 
 }
+input[type=radio] {
+    transform: scale(1.5);
+    margin: 10px 0;
+}
+label{
+    transform: scale(1);
+    margin-left: 20px;
+}
+
+
 

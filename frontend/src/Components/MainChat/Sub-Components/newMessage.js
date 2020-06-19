@@ -64,17 +64,14 @@ function NewMessageComponent(props) {
                     }}
                 >
                     <List component="nav" >
-                        <ListItem button>
-                            {/* <ListItemIcon>
-                                <InboxIcon />
-                            </ListItemIcon> */}
-                            <ListItemText primary="Send Location" onClick={sendLocation} />
+                        <ListItem button onClick={sendLocation}>
+                            <ListItemText primary="Send Location"  />
                         </ListItem>
                         <ListItem button>
-                            {/* <ListItemIcon>
-                                <DraftsIcon />
-                            </ListItemIcon> */}
                             <ListItemText primary="Send file" />
+                        </ListItem>
+                        <ListItem button onClick={() => {handleClose(); props.toggleCodePopUp()}}>
+                            <ListItemText primary="Send a code snippet" />
                         </ListItem>
                     </List>
                 </Popover>

@@ -1,14 +1,44 @@
 import React from 'react';
-import MessageList from './messageList';
 import { connect } from 'react-redux';
+import CodeSnippetModel from './codeSnippetModal';
+import Prism from 'prismjs'
 
 import NewMessageComponent from './newMessage';
+import MessageList from './messageList';
 import { addNewMessage, } from '../../../store/actions/chatActions';
+
 
 class ChatBox extends React.Component {
     state = {
-        message: ""
+        message: "",
+        filePopUpOpen: false,
+        codePopUpOpen: false,
     }
+
+    componentDidMount() {
+        Prism.highlightAll();
+    }
+
+
+    toggleFilePopUp = () => {
+        this.setState(prevState => {
+            return {
+                ...prevState,
+                filePopUpOpen: !prevState.filePopUpOpen
+            }
+        })
+    }
+
+    toggleCodePopUp = () => {
+        this.setState(prevState => {
+            return {
+                ...prevState,
+                codePopUpOpen: !prevState.codePopUpOpen
+            }
+        })
+    }
+
+
     handleNewMessageChange = (event) => {
         this.setState({
             message: event.target.value
@@ -40,7 +70,8 @@ class ChatBox extends React.Component {
         const message = {
             content: this.state.message,
             owner: { username: this.props.currentUser },
-            createdAt: new Date(Date.now()).toISOString()
+            createdAt: new Date(Date.now()).toISOString(),
+            type: "text"
         }
         let nameOfConversation = "";
         // Send the message through socket
@@ -57,6 +88,38 @@ class ChatBox extends React.Component {
         })
 
     }
+
+
+    sendCode = (language, code) => {
+        this.toggleCodePopUp();
+        console.log(language)
+        console.log(code)
+
+        if (code.length === 0 || language.length === 0)
+            return;
+        const message = {
+            content: code,
+            owner: { username: this.props.currentUser },
+            createdAt: new Date(Date.now()).toISOString(),
+            type: `code/${language}`,
+        }
+        let nameOfConversation = "";
+        // Send the message through socket
+        if (this.props.currentConversation[0] === 'channels') {
+            nameOfConversation = this.props.currentConversation[1].name
+            this.props.sendMessage(code, nameOfConversation, true, `code/${language}`)
+        } else {
+            nameOfConversation = this.props.currentConversation[1].name
+            this.props.sendMessage(code, nameOfConversation, false, `code/${language}`)
+        }
+        this.props.addNewMessage(message, this.props.currentConversation[0], nameOfConversation)
+        this.render();
+        this.setState({
+            message: ""
+        })
+        Prism.highlightAll();
+    }
+
     render() {
         // console.log(this.props)
         let title = "";
@@ -96,9 +159,10 @@ class ChatBox extends React.Component {
                         messageOnChange={this.handleNewMessageChange}
                         sendOnClick={this.addNewMessage}
                         sendLocation={this.sendLocation}
+                        toggleCodePopUp={this.toggleCodePopUp}
                     />
                 </div>
-
+                <CodeSnippetModel codePopUpOpen={this.state.codePopUpOpen} toggleCodePopUp={this.toggleCodePopUp} sendCode={this.sendCode} />
             </div>
         )
     }

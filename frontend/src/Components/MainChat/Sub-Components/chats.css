@@ -125,6 +125,10 @@
   /* flex-direction: ; */
 }
 
+.options:hover {
+  cursor: pointer;
+}
+
 .message-area,
 .message-user,
 .message-content,
@@ -151,12 +155,16 @@
   padding: 0 1rem;
   display: flex;
   flex-direction: column;
+  max-width: 80%;
   border-radius: 10px;
 }
 
 .message-user {
   font-size: 0.8rem;
   font-family: "HelveticaNeue-Light";
+  display: flex;
+  flex-direction: row;
+  width: 100%;
 }
 
 
@@ -179,6 +187,9 @@
 
 .current-user .message-area {
   color: black;
+}
+.code-area {
+  background-color: rgb(248, 247, 247);
 }
 
 /* NEW MESSAGE AREA */

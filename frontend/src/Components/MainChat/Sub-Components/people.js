@@ -30,12 +30,12 @@ class People extends Component {
 
   render() {
     
-    if (this.props.members)
+    if(this.props.members)
       return (
         <div className="mainbody">
           <br />
           <br />
-          <TableContainer component={Paper}>
+          <TableContainer >
             <Table aria-label="simple table">
               <TableHead>
                 <TableRow>
@@ -43,9 +43,10 @@ class People extends Component {
                   <TableCell align="right">Avatar</TableCell>
                   <TableCell align="right">Status</TableCell>
                   <TableCell align="right">Points</TableCell>
-                  <TableCell align="right">Moderator</TableCell>
+                  
                   {this.props.currentRoom.owner===this.props.userid &&
-                  <TableCell align="right">Remove</TableCell>}
+                  <b><TableCell align="right">Moderator</TableCell>
+                  <TableCell align="right">Remove</TableCell></b>}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -54,18 +55,19 @@ class People extends Component {
                     <TableCell component="th" scope="row">{member.username}</TableCell>
                     <TableCell align="right"><img src={serverBaseURL + '/' + member.avatar} className="imgs"/></TableCell>
                     <TableCell align="right">{member.status}</TableCell>
-                    <TableCell align="right">100</TableCell>
-                    <TableCell align="right">
+                    <TableCell align="right">{member.score}</TableCell>
+                    
+                      {this.props.currentRoom.owner===this.props.userid &&
+                      <i><TableCell align="right">
                       {!member.moderator &&
-                      <button className="btn btn-info" id="mod" name={member.username} onClick={this.handleMod}>Make Moderator</button>
+                      <button className="btn btn-info" id="mod" name={member.username} onClick={this.handleMod}>Make</button>
                       }
                       {member.moderator &&
                         <p>Moderator</p>
                       }
-                      </TableCell>
-                      {this.props.currentRoom.owner===this.props.userid &&
+                      </TableCell> 
                   <TableCell align="right">
-                    <button className="btn btn-info" name={member._id} onClick={this.handleClick}>Remove</button></TableCell>}
+                    <button className="btn btn-info" name={member._id} onClick={this.handleClick}>Remove</button></TableCell></i>}
                   </TableRow>
                 ))}
               </TableBody>

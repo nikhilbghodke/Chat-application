@@ -23,7 +23,8 @@ import {
     CHAT_LOADING_DONE,
     INIT_USERS_CONVO,
     DIRECTS_LOADING_DONE,
-    INIT_ROOM
+    INIT_ROOM,
+    CHANNEL_UPDATE
 } from "../actionTypes";
 
 const initialState = {
@@ -105,6 +106,33 @@ const chatReducer = (state = initialState, action) => {
                 users: [],
                 isChatLoaded: false,
                 isDirectMessagesLoaded: false
+            }
+
+        case CHANNEL_UPDATE:
+            /**
+             * We cannot mutate the state directly so copy the channels list
+             * search the channel object whose name === action.oldName and get the index
+             * Copy that channel object and make changes in this copy
+             * Replace the old channel object with the changed copy using the index: Now the copied list is updated
+             * Return new state where everything is same and just replace the channels with the copied list
+             */
+            let channelList = state.channels;
+            console.log(channelList)
+            console.log(action)
+
+            const channelIndex = channelList.findIndex((channel) => channel.name === action.oldName)
+            let channelObject = channelList[channelIndex];
+            
+            if (action.newName.length > 0)
+                channelObject.name = action.newName
+            if (action.newDescription.length > 0)
+                channelObject.description = action.newDescription
+            
+            channelList[channelIndex] = channelObject;
+
+            return {
+                ...state,
+                channels: channelList
             }
 
         default:

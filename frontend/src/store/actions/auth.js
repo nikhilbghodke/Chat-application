@@ -9,12 +9,14 @@ import {
   JOINING_ROOM,
   JOINED_ROOM,
   ROOM_LOADING_START,
-  SET_ROOM_ERROR
+  SET_ROOM_ERROR,
+  CHANNEL_UPDATE
 } from "../actionTypes";
 import { initRoom } from './chatActions';
 import { addError, removeError } from "./error";
 import { serverBaseURL } from '../../services/api'
 import jwtDecode from "jwt-decode";
+
 
 export function setCurrentUser(user) {
   console.log("Set current user")
@@ -75,6 +77,16 @@ export function setRoomError(errorMessage) {
     type: SET_ROOM_ERROR,
     errorMessage
   }
+}
+
+export function setChannel(oldName, newName, newDescription) {
+  console.log("setChannel")
+  return {
+    type: CHANNEL_UPDATE,
+    oldName,
+    newName,
+    newDescription
+  };
 }
 
 // ACTIONS CREATERS DONE
@@ -208,12 +220,16 @@ export function joinPublicRoom(roomName) {
 //Channel api 
 export function updateChannel(channelData) {
   const title = channelData.roomname;
-  const name = channelData.channelname;
+  const oldName = channelData.channelname;
+  const newName = channelData.title;
+  const newDescription = channelData.description;
   return dispatch => {
     return new Promise(async (resolve, reject) => {
       try {
-        const channel = await apiCall("patch", `${serverBaseURL}/room/${title}/channels/${name}`, channelData);
-        console.log(channel)
+        console.log(channelData)
+        const channel = await apiCall("patch", `${serverBaseURL}/room/${title}/channels/${oldName}`, channelData);
+        // A new action is dispatched for updating the channel within the redux
+        dispatch(setChannel(oldName, newName, newDescription))
         dispatch(removeError());
         resolve();
       }
@@ -226,6 +242,7 @@ export function updateChannel(channelData) {
   };
 }
 export function deleteChannel(title, name) {
+  console.log(name)
   return dispatch => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -261,8 +278,10 @@ export function createChannel(channelData) {
 }
 
 //room api
-export function updateRoom(roomData) {
-  const title = roomData.roomname;
+export function updateRoom(title, roomData) {
+  if (!roomData.title)
+    roomData.title = title
+  console.log(roomData.private)
   return dispatch => {
     return new Promise(async (resolve, reject) => {
       try {
@@ -315,20 +334,20 @@ export function createRoom(roomData) {
     })
   }
 }
-export function makeModerator(title,username) {
-   return dispatch => {
-     return new Promise(async (resolve, reject) => {
-       try {
-         const moderator = await apiCall("post", `${serverBaseURL}/room/${title}/moderator/${username}`,null);
-         dispatch(removeError());
-         resolve();
-       }
-       catch (err) {
-         console.log(err);
-         dispatch(addError(err.message));
-         reject();
-       }
-     });
-   };
- }
+export function makeModerator(title, username) {
+  return dispatch => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const moderator = await apiCall("post", `${serverBaseURL}/room/${title}/moderator/${username}`, null);
+        dispatch(removeError());
+        resolve();
+      }
+      catch (err) {
+        console.log(err);
+        dispatch(addError(err.message));
+        reject();
+      }
+    });
+  };
+}
 
