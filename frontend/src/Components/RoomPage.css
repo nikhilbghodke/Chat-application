@@ -36,10 +36,12 @@
 #roomlistdisp{
   display: flex;
   justify-content: space-between;
+  margin: 0.2rem;
 }
 #proomlistdisp{
   display: flex;
   justify-content: space-between;
+  margin: 0.2rem;
 }
 .form {
   text-align: center;

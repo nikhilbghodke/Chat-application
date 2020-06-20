@@ -320,6 +320,8 @@ export function updateRoom(title, roomData) {
     return new Promise(async (resolve, reject) => {
       try {
         const room = await apiCall("patch", `${serverBaseURL}/rooms/${title}`, roomData);
+        dispatch(getAllPublicRooms())
+        dispatch(getAllRoomsOfUser())
         dispatch(removeError());
         return resolve(room);
       }
@@ -349,7 +351,24 @@ export function deleteRoom(title) {
     });
   };
 }
-
+export function roomLeave(title) {
+  return dispatch => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const channel = await apiCall("post", `${serverBaseURL}/rooms/${title}/leave`, null);
+        dispatch(getAllPublicRooms())
+        dispatch(getAllRoomsOfUser())
+        dispatch(removeError());
+        resolve();
+      }
+      catch (err) {
+        console.log(err);
+        dispatch(addError(err.message));
+        reject();
+      }
+    });
+  };
+}
 export function createRoom(roomData) {
   return dispatch => {
     return new Promise(async (resolve, reject) => {

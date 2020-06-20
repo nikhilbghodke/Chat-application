@@ -12,6 +12,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { removeError } from "../../../store/actions/error";
 import './people.css'
+import { withRouter } from 'react-router-dom';
 
 class People extends Component {
   constructor(props) {
@@ -77,7 +78,7 @@ class People extends Component {
                         }
                       </TableCell>
                     }
-                    {this.props.currentRoom.owner === this.props.userid &&
+                    {(this.props.currentRoom.owner === this.props.userid && this.props.userid !=member._id) &&
                       <TableCell align="right">
                         <button className="btn btn-info" name={member._id} onClick={this.handleClick}>Remove</button></TableCell>}
                   </TableRow>
@@ -90,13 +91,7 @@ class People extends Component {
       )
     else
       return (
-        <div className="mainbody">
-          <LoadingOverlay
-            active={!this.props.members}
-            text="Loading Members..."
-            spinner>
-          </LoadingOverlay>
-        </div>
+        <center></center>
       )
   }
 }
@@ -114,4 +109,4 @@ const mapStateToProps = (state) => {
     members: state.currentUser.members
   }
 }
-export default connect(mapStateToProps, mapDispatchToProps)(People);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(People));

@@ -4,7 +4,7 @@
     flex-wrap: wrap;
     flex-grow: 1;
     flex-basis: 0;
-    justify-content: space-evenly;
+    justify-content: space-between;
 }
 
 .formchannel{
@@ -19,6 +19,16 @@ max-width: 550px;
 .formroom{
     align-self: flex-start;
     text-align: center;
+    justify-self:flex-end;
+    display: flex;
+    flex-direction: column;
+    padding:2rem;
+    margin: 1rem;
+    max-width: 550px;
+}
+.formchannel{
+    align-self: flex-start;
+    text-align: center;
     display: flex;
     flex-direction: column;
     padding:2rem;
@@ -27,6 +37,7 @@ max-width: 550px;
 }
 
 .formroom >*{
+    margin-left: 10rem;
     margin-bottom: 1rem;
 }
 .formchannel >*{

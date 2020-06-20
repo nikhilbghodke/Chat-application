@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { connect } from 'react-redux';
 import { serverBaseURL } from "../../../services/api"
 import Axios from 'axios';
-import {updateUser} from "../../../store/actions/auth"
+import {updateUser, roomLeave} from "../../../store/actions/auth"
 import { removeError } from "../../../store/actions/error";
 import { withRouter } from 'react-router-dom';
 
@@ -14,7 +14,8 @@ class Dashboard extends Component {
       password: "",
       username: this.props.currentUser.user.username,
       status: this.props.currentUser.user.status, 
-      file:""
+      file:"",
+      avatar : this.props.currentUser.user.avatar
     }
   }
 
@@ -37,16 +38,24 @@ fileChange = (e) => {
 fileUpload = e =>{
   const fd= new FormData();
   fd.append('avatar',this.state.file,this.state.file.name)
-    Axios.post(serverBaseURL+ `/profilePic`,fd)
+  console.log(`${serverBaseURL}/profilePic`)
+    Axios.post(`${serverBaseURL}/profilePic`,fd)
     .then(res=>{
-      console.log(res)
+      this.setState({
+        avatar:res.data.user.avatar
+      })
     })
 }
 
+handleLeave = e =>{
+  this.props.roomLeave(this.props.roomName)
+  this.props.history.push("/rooms")
+}
+
   render() {
-    const { username, status} = this.state
-    const {avatar}=this.props.currentUser.user
+    const { username, status,avatar} = this.state
     const urlimg = serverBaseURL + "/" + avatar
+    console.log(urlimg)
     this.props.history.listen(() => {
       removeError();
     });
@@ -72,7 +81,7 @@ fileUpload = e =>{
             <div class="row">
               <div class="col-md-12 ">
                 <form >
-                  <h2>Edit your profile.<small>It's always easy</small></h2>
+                  <span><h2>Edit your profile,<span><small>It's always easy</small></span></h2></span>
                   <br/>
                   <br/>
                   {this.props.error.message && (
@@ -118,6 +127,10 @@ fileUpload = e =>{
             </div>
           </div>
         </div >
+        <br />
+        <div id="leaveroom">
+        <button className="btn btn-primary btn-md" onClick={this.handleLeave}>Leave Room</button>
+        </div>
       </div>
     )
   }
@@ -126,12 +139,14 @@ fileUpload = e =>{
 const mapStateToProps = (state) => {
   return {
     currentUser: state.currentUser,
-    error: state.errors
+    error: state.errors,
+    roomName : state.chatReducer.roomName
   }
 }
 const mapDispatchToProps = (dispatch) => {
   return {
       updateUser: (data) => { dispatch(updateUser(data))},
+      roomLeave :(data) => {dispatch(roomLeave(data))}
   }
 }
 

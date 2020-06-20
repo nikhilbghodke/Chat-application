@@ -62,7 +62,7 @@ const mapStateToProps = (state) => {
     return {
         isChatLoaded: state.chatReducer.isChatLoaded,
         roomName: state.chatReducer.roomName,
-        currentUser: state.chatReducer.currentUser,
+        currentUser: state.currentUser.user,
         joingNewRoom: state.currentUser.joingNewRoom,
         allRooms: state.currentUser.allRooms,
         userid: state.currentUser.user._id

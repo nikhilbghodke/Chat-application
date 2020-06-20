@@ -29,13 +29,37 @@ class Edit extends Component {
   handleChannelUpdate = e => {
     e.preventDefault();
     this.props.updateChannel(this.state)
+    this.setState({
+        channelname: '',
+        roomname: this.props.roomName,
+        title: '',
+        description: '',
+        newchannel: '',
+        private: this.props.currentRoom.private
+    })
   };
   handleChannelDelete = e => {
     e.preventDefault();
     this.props.deleteChannel(this.state.roomname, e.target.name)
+    this.setState({
+      channelname: '',
+      roomname: this.props.roomName,
+      title: '',
+      description: '',
+      newchannel: '',
+      private: this.props.currentRoom.private
+  })
   }
   handleCreate = e => {
     this.props.createChannel(this.state)
+    this.setState({
+      channelname: '',
+      roomname: this.props.roomName,
+      title: '',
+      description: '',
+      newchannel: '',
+      private: this.props.currentRoom.private
+  })
   }
 
   handleDescription = e => {
@@ -77,6 +101,7 @@ class Edit extends Component {
   handleRoomUpdate = e => {
     e.preventDefault();
     this.props.updateRoom(this.props.roomName, this.state)
+    this.props.history.push("/rooms")
 
   }
 
@@ -124,7 +149,7 @@ class Edit extends Component {
                 <button className="btn btn-info border rounded-pill " type="button" onClick={this.handleCreate}>Create</button>
               </div>
             </form>
-            <hr />
+              <br/>
             <form className="formroom">
               <h4>Edit Your Room</h4>
               <div className="input-group mb-3 " id="rh">
@@ -135,23 +160,20 @@ class Edit extends Component {
                   </div>
                   <textarea className="form-control rounded" placeholder={description} onChange={this.handleDescription}></textarea>
                 </div>
-                <div className="input-group">
-                  <div className="input-group-prepend">
+                
                     <div class="form-check">
-
                       <input class="form-check-input" type="radio" name="pri" id="priv" value="true" onChange={this.handleChecked}></input>
                       <label class="form-check-label" for="priv">Private</label>
                       <span>   </span>
                       <input class="form-check-input" type="radio" name="pri" id="pub" value="false" onChange={this.handleChecked}></input>
                       <label class="form-check-label" for="pub"> Public </label>
                     </div>
-                  </div>
-                </div>
-                <br />
+                  <span> </span>
                 <br />
                 <button className="btn btn-info border rounded-pill " type="button" onClick={this.handleRoomUpdate}>Update</button>
                 <button className="btn btn-info border rounded-pill " type="button" onClick={this.handleRoomDelete}>Delete</button>
               </div>
+              <b>Caution : This will redirect you to room page</b>
             </form>
           </div>
         </div>
