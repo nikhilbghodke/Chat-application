@@ -97,12 +97,24 @@ app.post("/rooms/:title/leave", auth,async (req,res,next)=>{
     {
         return next({
             status:404,
-            message:"no uch room"
+            message:"no such room"
         })
     }
     room.members= room.members.filter((val)=>{
         return !val.equals(req.user._id)
     })
+    console.log(room.owner.equals(req.user._id))
+    if(room.owner.equals(req.user._id)){
+        if(room.members.length==0)
+        {
+            await room.delete()
+           return res.send("room was to be deleted")
+        }
+        else{
+            room.owner=room.members[0]
+            
+        }
+    }
     await room.save()
     res.send(room)
     }
