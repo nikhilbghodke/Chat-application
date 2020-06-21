@@ -95,7 +95,15 @@
     display: flex;
     flex-direction: row;
 }
+#alertid{
+    visibility: hidden;
+    }
+
 @media (max-width: 575.98px) { 
+
+#alertid{
+visibility: visible;
+}
     .content-right{
         margin-left: auto !important;
         margin-top:30% !important;

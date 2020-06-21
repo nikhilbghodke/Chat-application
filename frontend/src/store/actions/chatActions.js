@@ -109,7 +109,7 @@ export function getAllChannelMessages(roomName) {
                     resolve();
                 })
                 .catch(error => {
-                    alert(error.message)
+                  
                     dispatch(addError(error.message));
                     reject();
                 })
@@ -136,7 +136,7 @@ export function getAllDirectMessages(roomName) {
                     resolve();
                 })
                 .catch(error => {
-                    alert(error.message)
+                  
                     dispatch(addError(error.message));
                     reject();
                 })
@@ -155,7 +155,6 @@ export function uploadFile(file, fileName, callback) {
                 resolve();
             }
             catch (error) {
-                alert(error.message);
                 dispatch(addError(error.message));
                 reject();
             }
@@ -180,7 +179,7 @@ export function downloadFile(fileAddress, callback) {
                 resolve();
             }
             catch (error) {
-                alert(error.message);
+                
                 dispatch(addError(error.message));
                 reject();
             }
@@ -198,7 +197,7 @@ export function getMembers(roomName) {
                     resolve();
                 })
                 .catch(error => {
-                    alert(error.message)
+                  
                     dispatch(addError(error.message));
                     reject();
                 })

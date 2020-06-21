@@ -17,6 +17,7 @@ import {
 } from '../store/actions/auth';
 import { initRoom } from '../store/actions/chatActions'
 import { logout } from '../store/actions/auth'
+import { removeError } from "../store/actions/error";
 import { setTokenHeader } from '../services/api';
 
 import Icon from '../Assests/Images/icon-logo-2.png'
@@ -235,17 +236,9 @@ class RoomPage extends React.Component {
           this.joinedRoomNames.push(roomObject.title)
       })
 
-    if (this.props.roomError && this.props.roomError.length !== 0) {
-      return (
-        <Alert onClose={() => this.props.setRoomError("")} dismissible variant="danger">
-          <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
-          <p>
-            {this.props.roomError}
-          </p>
-        </Alert>
-      )
-    }
-
+      this.props.history.listen(() => {
+        removeError();
+      });
 
     return (
       <LoadingOverlay
@@ -266,7 +259,9 @@ class RoomPage extends React.Component {
           </li>
         </ul>
         <div className="roompage">
-
+        {this.props.error.message && (
+                <div className="alert alert-danger" role="alert">{this.props.error.message}</div>
+              )}
           <div className="form2">
 
             <div className="form">
@@ -294,14 +289,14 @@ class RoomPage extends React.Component {
               <br />
               <b> <p className="form-bottom-text">
                 Don't have a room yet?
-               <p
+               <Link
                   className="create-room"
                   onClick={() => {
                     this.handleShow();
                     console.log("BUTTON CLICK")
                   }}
                   className="new-room"
-                > Create One!</p>
+                > Create One!</Link>
               </p></b>
             </div>
           </div>
@@ -321,7 +316,7 @@ const mapStateToProps = (state) => {
     allRooms: state.currentUser.allRooms,
     allPublicRooms: state.currentUser.allPublicRooms,
     joiningNewRoom: state.currentUser.joinPublicRoom,
-    roomError: state.currentUser.roomError,
+    error : state.errors,
     username: state.currentUser.user.username
   }
 }

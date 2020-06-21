@@ -11,7 +11,7 @@ import { withRouter } from 'react-router-dom'
 
 import { changeCoversation, getAllChannelMessages, addNewMessage, getAllDirectMessages, directMessagesLoadingCompleted } from '../../../store/actions/chatActions';
 import { apiCall, serverBaseURL } from '../../../services/api'
-
+import { removeError } from "../../../store/actions/error";
 import ChatBox from './chatBox';
 
 import './chats.css';
@@ -164,14 +164,18 @@ class Chats extends React.Component {
     }
 
     render() {
-        // console.log(this.props)
-        // return (<h1>HELLO</h1>)
+        this.props.history.listen(() => {
+            removeError();
+          });
         return (
             <div className="main-area chat-area">
                 <div className="chat-list">
                     <div className="chat-list-subtitle">
                         <p>Your channels</p>
                     </div>
+                    {this.props.error.message && (
+                <alert message={this.props.error.message}/>
+              )}
                     <div className="channel-list">
                         <Scrollbars autoHide>
                             <div className="channel-list-header" onClick={() => this.setState({ channelCollapse: !this.state.channelCollapse })}>
@@ -236,6 +240,7 @@ const mapStateToProps = (state) => {
         selectedConversation: state.chatReducer.selectedConversation,
         isChatLoaded: state.chatReducer.isChatLoaded,
         isDirectMessagesLoaded: state.chatReducer.isDirectMessagesLoaded,
+        error:state.errors
     }
 }
 

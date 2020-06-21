@@ -7,6 +7,7 @@ import NewMessageComponent from './newMessage';
 import MessageList from './messageList';
 import { addNewMessage, uploadFile, reportMes } from '../../../store/actions/chatActions';
 import FileSelectModal from './fileSelectModal';
+import { removeError } from "../../../store/actions/error";
 
 
 class ChatBox extends React.Component {
@@ -168,7 +169,9 @@ class ChatBox extends React.Component {
             title = conversation.name;
         }
 
-        // console.log(this.props)
+        this.props.history.listen(() => {
+            removeError();
+          });
 
         return (
             <div className="chat-area-border">
@@ -188,6 +191,9 @@ class ChatBox extends React.Component {
                         conversationType={this.props.currentConversation[0]}
                     />
                 </div>
+                {this.props.error.message && (
+                <alert message={this.props.error.message}/>
+              )}
                 <div className="new-message">
                     <NewMessageComponent
                         currentMessage={this.state.message}
@@ -207,7 +213,8 @@ class ChatBox extends React.Component {
 
 const mapStateToProps = (state) => {
     return {
-        currentUser: state.currentUser.user.username
+        currentUser: state.currentUser.user.username,
+        error:state.errors
     }
 }
 

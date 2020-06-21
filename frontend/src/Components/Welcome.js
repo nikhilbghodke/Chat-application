@@ -5,21 +5,16 @@ import FacebookIcon from '../Assests/Images/facebook.png';
 import TwitterIcon from '../Assests/Images/twitter.png';
 import './Welcome.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
-// export default function Welcome () {
-//     return (
-//         <div className="welcome-background">
-//             <div className="icon-section">
-//                 <img src={Icon} alt="logo"></img>
-//             </div>
-//         </div>
-//     )
-// }
+
 export default function Welcome(props) {
     return (
-        <div className="welcome-background container-fluid">
+        <div className="welcome-background ">
             <div className="icon-section-welcome">
                 <img src={Icon} alt="icon" className="icon" onClick={() => alert("ICON")}/>
             </div>
+
+            <pre id="alertid" className="alert alert-danger" role="alert">"We do not currently support this resolution !
+             We recommend using this website on laptop or pc :)"</pre>
             <div className="content-right">
                 <p align="right">
                     Working From Home?
@@ -43,9 +38,7 @@ export default function Welcome(props) {
                     <button type="button" className="btn" onClick={() => props.history.push("/authenticate/signin")}>Sign in to your account</button>
                 </div>
             </div>
-            {/* <div className="background-image-section">
-                <img src={ImageBackground} className="background-image" alt="welcome" />
-            </div> */}
+            
             <div className="footer">
                 <div className="bottom-icon">
                     <img src={FooterIcon} alt="footer-icon"/>

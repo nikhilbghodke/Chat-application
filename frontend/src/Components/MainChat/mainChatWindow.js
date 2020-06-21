@@ -8,6 +8,7 @@ import People from './Sub-Components/people';
 import Chats from './Sub-Components/chats';
 import LoadingOverlay from 'react-loading-overlay';
 import Edit from './Sub-Components/edit';
+import { removeError } from "../../store/actions/error";
 
 import './mainChatWindow.css';
 
@@ -39,7 +40,9 @@ class MainChatWindow extends React.Component {
     }
 
     render() {
-        
+        this.props.history.listen(() => {
+            removeError();
+          });
         return (
             <div className="outer-layout">
                 <Header roomName={this.props.roomName} currentUser={this.props.currentUser}/>
@@ -50,6 +53,9 @@ class MainChatWindow extends React.Component {
                 >
                     <div className="sub-window">
                         <SideBar updatedSelected={this.updatedSelected} current={this.state.selected}/>
+                        {this.props.error.message && (
+                <div className="alert alert-danger" role="alert">{this.props.error.message}</div>
+              )}
                         {this.renderContent()}
                     </div>
                 </LoadingOverlay>
@@ -65,7 +71,8 @@ const mapStateToProps = (state) => {
         currentUser: state.currentUser.user,
         joingNewRoom: state.currentUser.joingNewRoom,
         allRooms: state.currentUser.allRooms,
-        userid: state.currentUser.user._id
+        userid: state.currentUser.user._id,
+        error : state.errors
     }
 }
 

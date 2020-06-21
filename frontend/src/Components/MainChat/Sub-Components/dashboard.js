@@ -41,9 +41,11 @@ fileUpload = e =>{
   console.log(`${serverBaseURL}/profilePic`)
     Axios.post(`${serverBaseURL}/profilePic`,fd)
     .then(res=>{
+      console.log(res.data.user.avatar)
       this.setState({
         avatar:res.data.user.avatar
       })
+      this.props.updateUser(this.state)
     })
 }
 
@@ -54,6 +56,7 @@ handleLeave = e =>{
 
   render() {
     const { username, status,avatar} = this.state
+    console.log(avatar)
     const urlimg = serverBaseURL + "/" + avatar
     console.log(urlimg)
     this.props.history.listen(() => {
@@ -68,7 +71,7 @@ handleLeave = e =>{
             <div class="row">
               <div class="col-md-12">
                 <div>
-                  <img src={urlimg} height="200" width="200" alt="Avatar" class="img-circle img-thumbnail"></img>
+                  <img src={urlimg} id="imgprof" alt="Avatar" class="img-circle img-thumbnail"></img>
                   <h2>{username}</h2>
                   <input type="file" name="file" accept="image/*" class="form-control-file" id="exampleFormControlFile1" onChange={this.fileChange}></input>
                   <br/>
