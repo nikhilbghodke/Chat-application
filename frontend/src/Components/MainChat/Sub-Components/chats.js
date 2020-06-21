@@ -52,22 +52,6 @@ class Chats extends React.Component {
     console.log(this.room)
     this.props.getAllDirectMessages(this.room)
 
-<<<<<<< Updated upstream
-
-        // This will initialize the socket
-        this.socket.emit('join', { username: this.props.username, room: this.room, token: this.token }, (error, data) => {
-            if (error) {
-                console.log(error)
-                alert(JSON.stringify(error))
-                // location.href="/"
-            }
-            else {
-                console.log(data)
-                this.setState({
-                    roomDetails: data
-                })
-            }
-=======
     // This will initialize the socket
     this.socket.emit('join', { username: this.props.username, room: this.room, token: this.token }, (error, data) => {
       if (error) {
@@ -79,31 +63,10 @@ class Chats extends React.Component {
         console.log(data)
         this.setState({
           roomDetails: data
->>>>>>> Stashed changes
         })
       }
     })
 
-<<<<<<< Updated upstream
-        // New message event listener
-        this.socket.on('recieve', (packet) => {
-            console.log(packet)
-            let { username, msg, room, channel, to, time, type, isReported, id } = packet;
-            console.log({ username, msg, room, channel, time })
-            if (room === this.room && username !== this.props.currentUser) {
-                const messageObject = {
-                    content: msg,
-                    owner: { username },
-                    createdAt: time,
-                    type: type,
-                    isReported,
-                    _id: id
-                }
-                console.log(messageObject)
-                if (channel)    // Message is from a channel
-                    this.props.addNewMessage(messageObject, "channels", channel)
-                else if (to) {    // Message is from a user
-=======
     // New message event listener
     this.socket.on('recieve', (packet) => {
       console.log(packet)
@@ -121,7 +84,6 @@ class Chats extends React.Component {
         if (channel)    // Message is from a channel
           this.props.addNewMessage(messageObject, "channels", channel)
         else if (to) {    // Message is from a user
->>>>>>> Stashed changes
 
           // If to is currentUser: it should go to the conversation of the message owner
           /**
@@ -284,16 +246,6 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = (dispatch) => {
-<<<<<<< Updated upstream
-    return {
-        addNewMessage: (message, typeOfConversation, conversationName) => { dispatch(addNewMessage(message, typeOfConversation, conversationName)) },
-        changeConversation: (typeOfConversation, indexOfConversation) => { dispatch(changeCoversation(typeOfConversation, indexOfConversation)) },
-        getAllChannelMessages: (roomName, token) => { dispatch(getAllChannelMessages(roomName, token)) },
-        getAllDirectMessages: (roomName, token) => { dispatch(getAllDirectMessages(roomName, token)) },
-        directMessagesLoadingCompleted: () => { dispatch(directMessagesLoadingCompleted()) },
-        chatLoadingCompleted: () => { dispatch(chatLoadingCompleted()) }
-    }
-=======
   return {
     addNewMessage: (message, typeOfConversation, conversationName) => { dispatch(addNewMessage(message, typeOfConversation, conversationName)) },
     changeConversation: (typeOfConversation, indexOfConversation) => { dispatch(changeCoversation(typeOfConversation, indexOfConversation)) },
@@ -301,7 +253,6 @@ const mapDispatchToProps = (dispatch) => {
     getAllDirectMessages: (roomName, token) => { dispatch(getAllDirectMessages(roomName, token)) },
     directMessagesLoadingCompleted: () => { dispatch(directMessagesLoadingCompleted()) },
   }
->>>>>>> Stashed changes
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Chats));
