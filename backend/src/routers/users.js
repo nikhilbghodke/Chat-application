@@ -79,7 +79,13 @@ app.post("/login", async (req,res,next)=>{
     
     try{
      const  user = await User.findByCredentials(req.body.email,req.body.password)
-     const token = await user.generateToken()
+     
+     const token = await user.generateToken()]
+     if(!user.isVerified)
+        return next({
+            message:"Please verify your email id first"
+        })
+
      res.send({user,token})
     }
     catch(e){
