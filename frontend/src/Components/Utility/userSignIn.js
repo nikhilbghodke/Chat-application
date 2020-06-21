@@ -25,7 +25,6 @@ class UserSignIn extends Component {
                 }
             })
             .catch((error) => {
-                alert(error);
                 return;
             });
     };
