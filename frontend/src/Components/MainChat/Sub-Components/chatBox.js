@@ -8,6 +8,7 @@ import MessageList from './messageList';
 import { addNewMessage, uploadFile, reportMes } from '../../../store/actions/chatActions';
 import FileSelectModal from './fileSelectModal';
 import { removeError } from "../../../store/actions/error";
+import { withRouter } from 'react-router-dom';
 
 
 class ChatBox extends React.Component {
@@ -226,4 +227,4 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ChatBox);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ChatBox));

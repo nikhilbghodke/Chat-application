@@ -254,4 +254,4 @@ const mapDispatchToProps = (dispatch) => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Chats));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Chats));

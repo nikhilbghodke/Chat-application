@@ -11,6 +11,7 @@ import Edit from './Sub-Components/edit';
 import { removeError } from "../../store/actions/error";
 
 import './mainChatWindow.css';
+import { withRouter } from 'react-router-dom';
 
 
 
@@ -76,4 +77,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(MainChatWindow);
+export default withRouter(connect(mapStateToProps)(MainChatWindow));
