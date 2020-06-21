@@ -33,8 +33,8 @@ function TextMessage(props) {
         <Dropdown as={ButtonGroup}>
             <Dropdown.Toggle split variant="success" id="dropdown-split-basic" size="sm" />
 
-            <Dropdown.Menu id="drop">
-                <Dropdown.Item id="menuitem" onClick={() => { console.log("Report!"); console.log(props.messageObject.id); props.reportOnClick(props.messageObject.id) }}>Report</Dropdown.Item>
+            <Dropdown.Menu >
+                <Dropdown.Item onClick={() => { console.log("Report!"); console.log(props.messageObject.id); props.reportOnClick(props.messageObject.id) }}>Report</Dropdown.Item>
             </Dropdown.Menu>
         </Dropdown>
     )
