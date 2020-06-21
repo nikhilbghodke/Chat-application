@@ -174,7 +174,7 @@ class Chats extends React.Component {
                         <p>Your channels</p>
                     </div>
                     {this.props.error.message && (
-                <alert message={this.props.error.message}/>
+                alert(this.props.error.message)
               )}
                     <div className="channel-list">
                         <Scrollbars autoHide>

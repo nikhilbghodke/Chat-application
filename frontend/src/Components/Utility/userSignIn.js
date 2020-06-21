@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { NavLink, withRouter } from 'react-router-dom'
 // import { render } from '@testing-library/react';
 import currentUser from '../../store/reducers/currentUser';
+import { connect } from 'react-redux';
+import { logout } from '../../store/actions/auth'
 
 class UserSignIn extends Component {
     constructor(props) {
@@ -82,4 +84,11 @@ class UserSignIn extends Component {
         );
     }
 }
-export default withRouter(UserSignIn);
+const mapDispatchToProps = (dispatch) => {
+    return {
+    
+      logout: () => { dispatch(logout()) },
+      
+    }
+  }
+export default withRouter(connect(null,mapDispatchToProps)(UserSignIn));

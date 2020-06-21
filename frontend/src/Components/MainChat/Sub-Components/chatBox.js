@@ -192,7 +192,7 @@ class ChatBox extends React.Component {
                     />
                 </div>
                 {this.props.error.message && (
-                <alert message={this.props.error.message}/>
+                alert(this.props.error.message)
               )}
                 <div className="new-message">
                     <NewMessageComponent
