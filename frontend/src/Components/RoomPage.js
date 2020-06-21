@@ -92,8 +92,9 @@ class RoomPage extends React.Component {
     }
   }
 
-  joinedRoomNames = [];
+
   componentDidMount() {
+    console.log("ROOM MOUNTED")
     if (!localStorage.jwtToken) {
       this.props.history.push("/authenticate/signin")
       return;
@@ -124,7 +125,7 @@ class RoomPage extends React.Component {
           onClick={() => {
             // console.log(roomObject)
             this.props.initRoom(roomObject.title)
-            this.props.history.push("/chat")
+            this.props.history.push("/chat/" + roomObject.title)
           }
           }
         >
@@ -144,9 +145,9 @@ class RoomPage extends React.Component {
   };
 
   publicRoomList = () => {
-    if (this.props.allPublicRooms) {
+    if (this.props.allPublicRooms && this.props.allRooms) {
       return this.props.allPublicRooms.map((roomObject, index) => {
-        if (!this.joinedRoomNames.includes(roomObject.title))
+        if (this.props.allRooms.findIndex((joinedRoom) => joinedRoom.title === roomObject.title) === -1)
           return <button id="proomlistdisp"
             key={index}
             type="button"
@@ -161,6 +162,7 @@ class RoomPage extends React.Component {
             {roomObject.private && <i>Private</i>}
             {!roomObject.private && <i>Public</i>}
           </button>
+        return null;
       })
     }
   }
@@ -239,6 +241,17 @@ class RoomPage extends React.Component {
       this.props.history.listen(() => {
         removeError();
       });
+    if (this.props.roomError && this.props.roomError.length !== 0) {
+      return (
+        <Alert onClose={() => this.props.setRoomError("")} dismissible variant="danger">
+          <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
+          <p>
+            {this.props.roomError}
+          </p>
+        </Alert>
+      )
+    }
+
 
     return (
       <LoadingOverlay
@@ -317,7 +330,8 @@ const mapStateToProps = (state) => {
     allPublicRooms: state.currentUser.allPublicRooms,
     joiningNewRoom: state.currentUser.joinPublicRoom,
     error : state.errors,
-    username: state.currentUser.user.username
+    username: state.currentUser.user.username,
+    roomError: state.currentUser.roomError,
   }
 }
 

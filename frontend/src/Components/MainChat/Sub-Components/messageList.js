@@ -7,21 +7,18 @@ import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
 import { connect } from 'react-redux'
 import { downloadFile } from '../../../store/actions/chatActions';
 import "./messageList.css"
-var fileDownload = require('js-file-download');
+import { serverBaseURL } from '../../../services/api';
 
 
 function TextMessage(props) {
     const [hover, setHover] = React.useState(false);
 
     function toggleHover() {
-        console.log("HOVERED")
         setHover(!hover)
     }
 
     const getCoords = (url) => {
-        console.log(url);
         const coords = url.split("=")[1].split(",");
-        console.log([coords[1], coords[0]]);
         return coords[1].toString() + ", " + coords[0].toString();
     };
 
@@ -39,11 +36,6 @@ function TextMessage(props) {
         </Dropdown>
     )
 
-    const fileDownloaded = (file, fileName) => {
-        // console.log("HEY");
-        // console.log(file);
-        fileDownload(file, fileName);
-    }
 
     return (
         <div className="message" key={props.keyValue} >
@@ -86,14 +78,13 @@ function TextMessage(props) {
                             (
                                 <div className="message-content "><pre><code className={"language-" + props.messageObject.type.split("/")[1].toLowerCase()}>{`${props.messageObject.content}`}</code></pre></div>
                             ) : (   // It is file
-                                <div
+                                <a
+                                    href={`${serverBaseURL}/${props.messageObject.content}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    download
                                     className="message-content"
-                                    onClick={() => {
-                                        props.downloadFile(props.messageObject.content, (file) => {
-                                            fileDownloaded(file, props.messageObject.type.split("/")[1])
-                                        })
-                                    }}
-                                ><GetAppRoundedIcon />{props.messageObject.type.split("/")[1]}</div>
+                                ><GetAppRoundedIcon />{props.messageObject.type.split("/")[1]}</a>
                             )
 
                 }
@@ -123,13 +114,11 @@ class MessageList extends React.Component {
     }
 
     render() {
-        console.log(this.props);
         return (
             <Scrollbars autoHide ref="messageScrollbar">
                 {this.props.messageList.map((message, index) => {
                     let date = new Date(message.createdAt);
                     const time = date.toTimeString().split(" ")[0];
-                    console.log(message)
                     let messageObject = {
                         content: message.isReported ? "This message was reported" : message.content,
                         owner: "unknown",
@@ -138,7 +127,6 @@ class MessageList extends React.Component {
                         id: message._id,
                         isReported: message.isReported
                     };
-                    console.log(messageObject)
                     if (message.owner) {
                         if (message.owner.username)
                             messageObject.owner = message.owner.username;

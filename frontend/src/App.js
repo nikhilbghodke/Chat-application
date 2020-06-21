@@ -30,7 +30,7 @@ function App() {
             <Switch>
               <Route path="/" exact strict component={Welcome} />
               <Route path="/authenticate/:type" exact strict component={AuthenticationPage} />
-              <Route path="/chat" exact strict component={MainChatWindow} />
+              <Route path="/chat/:roomName" exact strict component={MainChatWindow} />
               <Route path="/rooms" exact strict component={RoomPage} />
               <Route component={NotFound} />
             </Switch>

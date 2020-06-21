@@ -30,7 +30,6 @@ import {
     CHANNEL_CREATE,
     REPORT_MESSAGE
 } from "../actionTypes";
-import { reportedMessage } from "../actions/chatActions";
 
 const initialState = {
     currentUser: "",
@@ -49,6 +48,16 @@ const chatReducer = (state = initialState, action) => {
                 const index = state.channels.findIndex(channel => channel.name === action.conversationName);
                 let newChannels = [...state.channels];
                 let oldMessages = newChannels[index].messages;
+                // Before adding new message, check if the last 10 messages have the same id as this message
+                const messageLength = oldMessages.length;
+                if (action.message.id)
+                    for (var i = messageLength - 10; i < messageLength; i++) {
+                        if (oldMessages[i]._id === action.message._id){
+                            console.log("REPEATED")
+                            return state;
+                        }
+                    }
+
                 newChannels[index] = { ...newChannels[index], messages: [...oldMessages, action.message] }
 
                 return {
@@ -58,8 +67,8 @@ const chatReducer = (state = initialState, action) => {
             }
             // Else this is user conversation
             const index = state.users.findIndex(userConversation => userConversation.name === action.conversationName);
-            console.log(action)
-            console.log(index)
+            // console.log(action)
+            // console.log(index)
             let newUserConversations = [...state.users];
             let oldMessages = newUserConversations[index].messages;
             newUserConversations[index] = { ...newUserConversations[index], messages: [...oldMessages, action.message] }
@@ -152,37 +161,15 @@ const chatReducer = (state = initialState, action) => {
             }
 
         case REPORT_MESSAGE:
-            console.log(action)
-            // Find the message using id from the convo type
-            // Change the isReported: to true
-            console.log('channels')
-            // let tempChannelList = [...state.channels];
-            // console.log(tempChannelList)
-            // let channelIndexReport = tempChannelList.findIndex((channel) => channel.name === action.convoName)
-            // console.log(channelIndexReport)
-            // let messageIndex = tempChannelList[channelIndexReport].messages.findIndex((message) => message._id === action.id)
-            // console.log(messageIndex)
-            // isReported: true
-            // let tempMessage = tempChannelList[channelIndexReport].messages[messageIndex]
-            // tempMessage.isReported = true;
-            // tempChannelList[channelIndexReport].messages[messageIndex] = tempMessage;
 
 
             let channelsList = [...state.channels];
-            // Which channel
             let reportedChannelIndex = channelsList.findIndex(channel => channel.name === action.convoName)
-            console.log(reportedChannelIndex)
             let oldMessagesList = [...channelsList[reportedChannelIndex].messages];
-            // Which message in this channel
             let reportedMessageIndex = oldMessagesList.findIndex(messageObject => messageObject._id === action.id)
-            console.log(reportedMessageIndex)
-            // Get this message Object
-            let oldMessageObject = {...oldMessagesList[reportedMessageIndex]};
-            // set isReported: true
+            let oldMessageObject = { ...oldMessagesList[reportedMessageIndex] };
             oldMessageObject.isReported = true
-            //Replace the old message object with new at the same index
             oldMessagesList[reportedMessageIndex] = oldMessageObject;
-            // Replace the message list in the channels list
             channelsList[reportedChannelIndex].messages = oldMessagesList
 
             return {

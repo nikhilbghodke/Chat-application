@@ -210,7 +210,7 @@ export function removeUser(title, name, callback) {
     return dispatch => {
         return new Promise(async (resolve, reject) => {
             try {
-                const members = await apiCall("get", `${serverBaseURL}/rooms/${title}/kick/${name}`, null);
+                await apiCall("get", `${serverBaseURL}/rooms/${title}/kick/${name}`, null);
                 dispatch(removeError());
                 callback();
                 resolve();

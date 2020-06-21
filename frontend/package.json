@@ -34,7 +34,7 @@
     "socket.io-client": "^2.3.0"
   },
   "scripts": {
-    "start": "set PORT=8080 && react-scripts start",
+    "start": "set PORT=8080 && http-server build",
     "build": "set PORT=8080 && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
