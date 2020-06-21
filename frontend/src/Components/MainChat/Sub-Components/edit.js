@@ -76,7 +76,6 @@ class Edit extends Component {
         return <div>
           {channelObject.name != "general" && channelObject.name != "chill" &&
             <div>
-              <h4>Edit Your Channels</h4>
               <div className="input-group mb-3" id="rch">
                 <input type="text" className="form-control rounded" name={channelObject.name}
                   placeholder={channelObject.name} onChange={this.handleChange}
@@ -133,6 +132,7 @@ class Edit extends Component {
           )}
           <div className="mainbody">
             <form className="formchannel" >
+            <h4>Edit Your Channels</h4>
               {this.channelList()}
               <br />
               <h4>Create new Channel!</h4>
@@ -152,6 +152,7 @@ class Edit extends Component {
               <br/>
             <form className="formroom">
               <h4>Edit Your Room</h4>
+              <br/>
               <div className="input-group mb-3 " id="rh">
                 <input type="text" className="form-control rounded" placeholder={title} onChange={this.handleChange} required></input>
                 <div className="input-group">

@@ -192,9 +192,7 @@ class ChatBox extends React.Component {
                         conversationType={this.props.currentConversation[0]}
                     />
                 </div>
-                {this.props.error.message && (
-                alert(this.props.error.message)
-              )}
+               
                 <div className="new-message">
                     <NewMessageComponent
                         currentMessage={this.state.message}

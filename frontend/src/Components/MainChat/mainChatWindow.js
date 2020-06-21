@@ -54,9 +54,7 @@ class MainChatWindow extends React.Component {
                 >
                     <div className="sub-window">
                         <SideBar updatedSelected={this.updatedSelected} current={this.state.selected}/>
-                        {this.props.error.message && (
-                <div className="alert alert-danger" role="alert">{this.props.error.message}</div>
-              )}
+                 
                         {this.renderContent()}
                     </div>
                 </LoadingOverlay>

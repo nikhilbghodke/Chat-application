@@ -21,37 +21,38 @@ import './chats.css';
 
 
 class Chats extends React.Component {
-    socket = openSocket(serverBaseURL);
-    room = this.props.roomName
+  socket = openSocket(serverBaseURL);
+  room = this.props.roomName
 
-    token = localStorage.jwtToken;
+  token = localStorage.jwtToken;
 
-    state = {
-        channelCollapse: false,
-        messageCollpase: false,
-        roomDetails: null,
+  state = {
+    channelCollapse: false,
+    messageCollpase: false,
+    roomDetails: null,
+  }
+
+  componentDidMount() {
+
+    if (this.props.roomName === "") {
+      // No room is selected
+      this.props.history.push("/rooms")
+      return
+    }
+    if (!localStorage.jwtToken) {
+      this.props.history.push('/authenticate/signin')
+      return
     }
 
-    componentDidMount() {
+    // Retireve all channel messages from Database
+    this.props.getAllChannelMessages(this.room)
 
-        if (this.props.roomName === "") {
-            // No room is selected
-            this.props.history.push("/rooms")
-            return
-        }
-        if (!localStorage.jwtToken) {
-            this.props.history.push('/authenticate/signin')
-            return
-        }
+    // Retrieve all direct messages
+    console.log("DIRECT MESSAGES ROOM")
+    console.log(this.room)
+    this.props.getAllDirectMessages(this.room)
 
-        // Retireve all channel messages from Database
-        this.props.getAllChannelMessages(this.room)
-
-        // Retrieve all direct messages
-        console.log("DIRECT MESSAGES ROOM")
-        console.log(this.room)
-        this.props.getAllDirectMessages(this.room)
-
+<<<<<<< Updated upstream
 
         // This will initialize the socket
         this.socket.emit('join', { username: this.props.username, room: this.room, token: this.token }, (error, data) => {
@@ -66,8 +67,24 @@ class Chats extends React.Component {
                     roomDetails: data
                 })
             }
+=======
+    // This will initialize the socket
+    this.socket.emit('join', { username: this.props.username, room: this.room, token: this.token }, (error, data) => {
+      if (error) {
+        console.log(error)
+        alert(JSON.stringify(error))
+        // location.href="/"
+      }
+      else {
+        console.log(data)
+        this.setState({
+          roomDetails: data
+>>>>>>> Stashed changes
         })
+      }
+    })
 
+<<<<<<< Updated upstream
         // New message event listener
         this.socket.on('recieve', (packet) => {
             console.log(packet)
@@ -86,167 +103,188 @@ class Chats extends React.Component {
                 if (channel)    // Message is from a channel
                     this.props.addNewMessage(messageObject, "channels", channel)
                 else if (to) {    // Message is from a user
-
-                    // If to is currentUser: it should go to the conversation of the message owner
-                    /**
-                     * Ex: A -> B
-                     * owner: A
-                     * to: B
-                     * If A is current user: msg should be listed in convo named B
-                     * If B is current user: msg should be listed in convo named A
-                     */
-                    if (to === this.props.currentUser) {
-                        to = messageObject.owner.username
-                    }
-                    this.props.addNewMessage(messageObject, "users", to)
-                }
-            } else {
-                this.render();
-            }
-
-        })
-
-
-
-        // List animation
-        setTimeout(() => {
-            this.setState({
-                channelCollapse: true,
-                messageCollpase: true
-            })
-        },
-            500)
-    }
-
-    sendMessage = (newMessage, conversation, channel = true, type = "text") => {
-        // Send message to socket and to the REDUX store
-
-        let packet = {
-            room: this.room,
-            msg: newMessage,
-            token: this.token,
-            type: type
+=======
+    // New message event listener
+    this.socket.on('recieve', (packet) => {
+      console.log(packet)
+      let { username, msg, room, channel, to, time, type, isReported } = packet;
+      console.log({ username, msg, room, channel, time })
+      if (room === this.room && username !== this.props.currentUser) {
+        const messageObject = {
+          content: msg,
+          owner: { username },
+          createdAt: time,
+          type: type,
+          isReported,
         }
-        if (channel)
-            packet.channel = conversation
-        else
-            packet.to = conversation
+        console.log(messageObject)
+        if (channel)    // Message is from a channel
+          this.props.addNewMessage(messageObject, "channels", channel)
+        else if (to) {    // Message is from a user
+>>>>>>> Stashed changes
 
-        console.log(packet)
+          // If to is currentUser: it should go to the conversation of the message owner
+          /**
+           * Ex: A -> B
+           * owner: A
+           * to: B
+           * If A is current user: msg should be listed in convo named B
+           * If B is current user: msg should be listed in convo named A
+           */
+          if (to === this.props.currentUser) {
+            to = messageObject.owner.username
+          }
+          this.props.addNewMessage(messageObject, "users", to)
+        }
+      } else {
+        this.render();
+      }
 
-        this.socket.emit('send', packet, (error) => {
-            if (error) {
-                console.log(error)
-                return alert(error.message);
-            }
-            console.log("Message Sent")
-        })
+    })
+
+
+
+    // List animation
+    setTimeout(() => {
+      this.setState({
+        channelCollapse: true,
+        messageCollpase: true
+      })
+    },
+      500)
+  }
+
+  sendMessage = (newMessage, conversation, channel = true, type = "text") => {
+    // Send message to socket and to the REDUX store
+
+    let packet = {
+      room: this.room,
+      msg: newMessage,
+      token: this.token,
+      type: type
     }
+    if (channel)
+      packet.channel = conversation
+    else
+      packet.to = conversation
 
-    listElement = (listToMap, isChannel = true) => {
-        // If the list is of channels, name is channels[i].name
-        // If the list is of users, name is users[i] directly
-        return (
-            <List component="nav">
-                {listToMap.map((entity, index) => {
-                    return (
-                        <ul
-                            key={index}
-                            className={"channel-list-ul " + (index === 0 ? "first" : "")}
-                            onClick={() => {
-                                this.props.changeConversation(isChannel ? "channels" : "users", index)
-                            }}
-                        >
-                            <div>{entity.name}</div>
-                        </ul>
-                    )
-                })}
-            </List>
-        )
-    }
+    console.log(packet)
 
-    render() {
-        this.props.history.listen(() => {
-            removeError();
-          });
-        return (
-            <div className="main-area chat-area">
-                <div className="chat-list">
-                    <div className="chat-list-subtitle">
-                        <p>Your channels</p>
-                    </div>
-                    {this.props.error.message && (
-                alert(this.props.error.message)
+    this.socket.emit('send', packet, (error) => {
+      if (error) {
+        console.log(error)
+        return alert(error.message);
+      }
+      console.log("Message Sent")
+    })
+  }
+
+  listElement = (listToMap, isChannel = true) => {
+    // If the list is of channels, name is channels[i].name
+    // If the list is of users, name is users[i] directly
+    return (
+      <List component="nav">
+        {listToMap.map((entity, index) => {
+          return (
+            <ul
+              key={index}
+              className={"channel-list-ul " + (index === 0 ? "first" : "")}
+              onClick={() => {
+                this.props.changeConversation(isChannel ? "channels" : "users", index)
+              }}
+            >
+              <div>{entity.name}</div>
+            </ul>
+          )
+        })}
+      </List>
+    )
+  }
+
+  render() {
+    this.props.history.listen(() => {
+      removeError();
+    });
+    return (
+      <div className="main-area chat-area">
+        <div className="chat-list">
+          <div className="chat-list-subtitle">
+            <p>Your channels</p>
+          </div>
+          {this.props.error.message && (
+                alert(this.props.error.message) &&
+                 removeError()
               )}
-                    <div className="channel-list">
-                        <Scrollbars autoHide>
-                            <div className="channel-list-header" onClick={() => this.setState({ channelCollapse: !this.state.channelCollapse })}>
-                                Channels
+          <div className="channel-list">
+            <Scrollbars autoHide>
+              <div className="channel-list-header" onClick={() => this.setState({ channelCollapse: !this.state.channelCollapse })}>
+                Channels
                             {this.state.channelCollapse ? <ExpandLess /> : <ExpandMore />}
-                            </div>
+              </div>
 
-                            <Collapse in={this.state.channelCollapse} timeout="auto" unmountOnExit>
-                                <div>
-                                    {this.props.isChatLoaded ? this.listElement(this.props.channels) : null}
-                                </div>
-                            </Collapse>
-                            <LoadingOverlay
-                                active={!this.props.isDirectMessagesLoaded && this.props.isChatLoaded}
-                                spinner
-                                text="Loading"
-                            >
-                                <div className="channel-list-header" onClick={() => this.setState({ messageCollpase: !this.state.messageCollpase })}>
-                                    Direct Messages
+              <Collapse in={this.state.channelCollapse} timeout="auto" unmountOnExit>
+                <div>
+                  {this.props.isChatLoaded ? this.listElement(this.props.channels) : null}
+                </div>
+              </Collapse>
+              <LoadingOverlay
+                active={!this.props.isDirectMessagesLoaded && this.props.isChatLoaded}
+                spinner
+                text="Loading"
+              >
+                <div className="channel-list-header" onClick={() => this.setState({ messageCollpase: !this.state.messageCollpase })}>
+                  Direct Messages
                             {this.state.messageCollpase ? <ExpandLess /> : <ExpandMore />}
-                                </div>
-
-                                <Collapse in={this.state.messageCollpase} timeout="auto" unmountOnExit>
-                                    <div>
-                                        {this.props.isDirectMessagesLoaded ? this.listElement(this.props.users, false) : null}
-                                    </div>
-                                </Collapse>
-                            </LoadingOverlay>
-
-                        </Scrollbars>
-                    </div>
-                </div>
-                <div className="chat-box">
-                    {this.props.isChatLoaded
-                        ?
-                        <ChatBox
-                            roomName={this.props.roomName}
-                            currentConversation={
-                                // ["type", conversation]
-                                this.props.selectedConversation[0] === "channels"
-                                    ?
-                                    [this.props.selectedConversation[0], this.props.channels[this.props.selectedConversation[1]]]
-                                    :
-                                    [this.props.selectedConversation[0], this.props.users[this.props.selectedConversation[1]]]
-                            }
-                            sendMessage={this.sendMessage}
-                        />
-                        : null}
                 </div>
 
-            </div>
-        )
-    }
+                <Collapse in={this.state.messageCollpase} timeout="auto" unmountOnExit>
+                  <div>
+                    {this.props.isDirectMessagesLoaded ? this.listElement(this.props.users, false) : null}
+                  </div>
+                </Collapse>
+              </LoadingOverlay>
+
+            </Scrollbars>
+          </div>
+        </div>
+        <div className="chat-box">
+          {this.props.isChatLoaded
+            ?
+            <ChatBox
+              roomName={this.props.roomName}
+              currentConversation={
+                // ["type", conversation]
+                this.props.selectedConversation[0] === "channels"
+                  ?
+                  [this.props.selectedConversation[0], this.props.channels[this.props.selectedConversation[1]]]
+                  :
+                  [this.props.selectedConversation[0], this.props.users[this.props.selectedConversation[1]]]
+              }
+              sendMessage={this.sendMessage}
+            />
+            : null}
+        </div>
+
+      </div>
+    )
+  }
 }
 const mapStateToProps = (state) => {
-    return {
-        currentUser: state.currentUser.user.username,
-        roomName: state.chatReducer.roomName,
-        channels: state.chatReducer.channels,
-        users: state.chatReducer.users,
-        selectedChannelIndex: state.chatReducer.selectedChannelIndex,
-        selectedConversation: state.chatReducer.selectedConversation,
-        isChatLoaded: state.chatReducer.isChatLoaded,
-        isDirectMessagesLoaded: state.chatReducer.isDirectMessagesLoaded,
-        error:state.errors
-    }
+  return {
+    currentUser: state.currentUser.user.username,
+    roomName: state.chatReducer.roomName,
+    channels: state.chatReducer.channels,
+    users: state.chatReducer.users,
+    selectedChannelIndex: state.chatReducer.selectedChannelIndex,
+    selectedConversation: state.chatReducer.selectedConversation,
+    isChatLoaded: state.chatReducer.isChatLoaded,
+    isDirectMessagesLoaded: state.chatReducer.isDirectMessagesLoaded,
+    error: state.errors
+  }
 }
 
 const mapDispatchToProps = (dispatch) => {
+<<<<<<< Updated upstream
     return {
         addNewMessage: (message, typeOfConversation, conversationName) => { dispatch(addNewMessage(message, typeOfConversation, conversationName)) },
         changeConversation: (typeOfConversation, indexOfConversation) => { dispatch(changeCoversation(typeOfConversation, indexOfConversation)) },
@@ -255,6 +293,15 @@ const mapDispatchToProps = (dispatch) => {
         directMessagesLoadingCompleted: () => { dispatch(directMessagesLoadingCompleted()) },
         chatLoadingCompleted: () => { dispatch(chatLoadingCompleted()) }
     }
+=======
+  return {
+    addNewMessage: (message, typeOfConversation, conversationName) => { dispatch(addNewMessage(message, typeOfConversation, conversationName)) },
+    changeConversation: (typeOfConversation, indexOfConversation) => { dispatch(changeCoversation(typeOfConversation, indexOfConversation)) },
+    getAllChannelMessages: (roomName, token) => { dispatch(getAllChannelMessages(roomName, token)) },
+    getAllDirectMessages: (roomName, token) => { dispatch(getAllDirectMessages(roomName, token)) },
+    directMessagesLoadingCompleted: () => { dispatch(directMessagesLoadingCompleted()) },
+  }
+>>>>>>> Stashed changes
 }
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Chats));

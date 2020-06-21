@@ -37,6 +37,7 @@ fileChange = (e) => {
 
 fileUpload = e =>{
   const fd= new FormData();
+  if(this.state.file){
   fd.append('avatar',this.state.file,this.state.file.name)
   console.log(`${serverBaseURL}/profilePic`)
     Axios.post(`${serverBaseURL}/profilePic`,fd)
@@ -47,6 +48,7 @@ fileUpload = e =>{
       })
       this.props.updateUser(this.state)
     })
+  }
 }
 
 handleLeave = e =>{
