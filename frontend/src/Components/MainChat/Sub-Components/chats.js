@@ -254,5 +254,5 @@ const mapDispatchToProps = (dispatch) => {
     directMessagesLoadingCompleted: () => { dispatch(directMessagesLoadingCompleted()) },
   }
 }
-
+add 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Chats));
