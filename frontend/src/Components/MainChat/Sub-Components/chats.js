@@ -68,14 +68,17 @@ class Chats extends React.Component {
         })
 
         // New message event listener
-        this.socket.on('recieve', ({ username, msg, room, channel, to, time, type }) => {
+        this.socket.on('recieve', (packet) => {
+            console.log(packet) 
+            let { username, msg, room, channel, to, time, type, isReported } = packet;
             console.log({ username, msg, room, channel, time })
             if (room === this.room && username !== this.props.currentUser) {
                 const messageObject = {
                     content: msg,
                     owner: { username },
                     createdAt: time,
-                    type: type
+                    type: type,
+                    isReported,
                 }
                 console.log(messageObject)
                 if (channel)    // Message is from a channel
@@ -205,6 +208,7 @@ class Chats extends React.Component {
                     {this.props.isChatLoaded
                         ?
                         <ChatBox
+                            roomName={this.props.roomName}
                             currentConversation={
                                 // ["type", conversation]
                                 this.props.selectedConversation[0] === "channels"

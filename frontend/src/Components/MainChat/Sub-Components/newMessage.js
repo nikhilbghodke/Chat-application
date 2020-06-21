@@ -6,13 +6,10 @@ import AttachFileIcon from '@material-ui/icons/AttachFile';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import { hot } from 'react-hot-loader';
+import Input from '@reactmaker/react-autocorrect-input';
+import words from './words';
 
-const useStyles = makeStyles((theme) => ({
-    typography: {
-        padding: theme.spacing(2),
-        fontSize: 10
-    },
-}));
 
 function NewMessageComponent(props) {
 
@@ -29,7 +26,6 @@ function NewMessageComponent(props) {
 
     }
 
-    const classes = useStyles();
     const [anchorEl, setAnchorEl] = React.useState(null);
 
     const handleClick = (event) => {
@@ -42,6 +38,7 @@ function NewMessageComponent(props) {
 
     const open = Boolean(anchorEl);
     const id = open ? 'simple-popover' : undefined;
+
 
     return (
         <>
@@ -77,18 +74,20 @@ function NewMessageComponent(props) {
                 </Popover>
             </div>
             <div className="message-text">
-                <TextField
-                    name="new-message"
-                    placeholder="New Message"
-                    id="new-message-text-field"
-                    variant="outlined"
-                    multiline
+                <Input
+                    dataSource={words}
+                    className="input-new"
+                    // name="new-message"
+                    // placeholder="New Message"
+                    // id="new-message-text-field"
+                    // variant="outlined"
+                    // multiline
                     value={props.currentMessage}
                     // rows={2}
                     onChange={props.messageOnChange}
                 >
 
-                </TextField>
+                </Input>
             </div>
             <button className="send-button" onClick={props.sendOnClick}>
                 Send
@@ -97,4 +96,4 @@ function NewMessageComponent(props) {
     )
 }
 
-export default NewMessageComponent;
+export default hot(module)(NewMessageComponent);

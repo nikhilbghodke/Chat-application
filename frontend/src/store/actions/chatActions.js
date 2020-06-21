@@ -7,6 +7,7 @@ import {
     DIRECTS_LOADING_DONE,
     INIT_ROOM,
     MEMBERS,
+    REPORT_MESSAGE
 } from '../actionTypes';
 import { serverBaseURL, apiCall, setTokenHeader } from '../../services/api'
 import { addError, removeError } from "./error";
@@ -68,6 +69,17 @@ export function roomMembers(members) {
         members
     }
 }
+
+export function reportedMessage(id, convoType, convoName) {
+    console.log("REPORTED MESSAGE AFTER API")
+    return {
+        type: REPORT_MESSAGE,
+        id,
+        convoType,
+        convoName
+    }
+}
+
 /* *************************** */
 
 
@@ -163,7 +175,7 @@ export function downloadFile(fileAddress, callback) {
             try {
                 const file = await axios.post(serverBaseURL + '/download', data, {
                     headers: headers
-                  })
+                })
                 callback(file);
                 resolve();
             }
@@ -193,22 +205,42 @@ export function getMembers(roomName) {
         })
     }
 }
-export function removeUser(title,name, callback) {
+export function removeUser(title, name, callback) {
     console.log(name)
     console.log(title)
     return dispatch => {
-      return new Promise(async (resolve, reject) => {
-        try {
-          const members = await apiCall("get", `${serverBaseURL}/rooms/${title}/kick/${name}`,null);
-          dispatch(removeError());
-          callback();
-          resolve();
-        }
-        catch (err) {
-          console.log(err);
-          dispatch(addError(err.message));
-          reject();
-        }
-      });
+        return new Promise(async (resolve, reject) => {
+            try {
+                const members = await apiCall("get", `${serverBaseURL}/rooms/${title}/kick/${name}`, null);
+                dispatch(removeError());
+                callback();
+                resolve();
+            }
+            catch (err) {
+                console.log(err);
+                dispatch(addError(err.message));
+                reject();
+            }
+        });
     };
+}
+
+export function reportMes(mObject) {
+    console.log(mObject)
+    let { id, convoType, convoName, roomName } = mObject;
+    return dispatch => {
+        return new Promise(async (resolve, reject) => {
+            try {
+                await apiCall('post', `${serverBaseURL}/room/${roomName}/report/${id}`)
+                // apiCall()
+                console.log("REPORT API HIT")
+                console.log(id, convoType, convoName)
+                dispatch(reportedMessage(id, convoType, convoName))
+                resolve();
+            } catch (error) {
+                dispatch(addError(error.message));
+                reject();
+            }
+        })
+    }
 }

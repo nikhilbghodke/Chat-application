@@ -92,6 +92,10 @@ i{
 }
 
 
+.create-room:hover {
+  cursor: pointer;
+}
+
 @media (max-width: 700px) {
   .nav{
       align-items: center;

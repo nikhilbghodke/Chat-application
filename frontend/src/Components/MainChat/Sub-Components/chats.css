@@ -167,6 +167,25 @@
   cursor: pointer;
 }
 
+#drop{
+  outline: none;
+  width: 0.2px;
+  height:0.5px;
+  background-color:rgb(138, 138, 240);
+  align-content: flex-start;
+  margin-top: 0.2em;
+  margin-left: 0.2rem;
+  display: flex;
+  border: none;
+  
+}
+
+#menuitem{
+  width: fit-content;
+  height:fit-content;
+  background-color:aliceblue;
+}
+
 .message-area {
   background-color: rgb(138, 138, 240);
   padding: 0 1rem;
@@ -242,6 +261,20 @@
   font-size: 0.8rem;
 }
 
+.sc-bdVaJa{
+  width: 100%;
+}
+
+.sc-bdVaJa textarea {
+  height: 5rem;
+  /* max-height: 5rem; */
+}
+
+.sc-htpNat{
+  display: flex;
+  flex-direction: column-reverse;
+}
+
 .message-text .MuiTextField-root {
   width: 100%;
   /* height: 90%; */
@@ -251,6 +284,8 @@
 .message-text .MuiOutlinedInput-multiline {
   min-height: 3rem;
 }
+
+
 
 .send-button {
   flex: 0.7;

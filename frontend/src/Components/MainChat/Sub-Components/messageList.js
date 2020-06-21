@@ -30,17 +30,18 @@ function TextMessage(props) {
     }
 
     const DropdownElement = () => (
-        <Dropdown>
-            <Dropdown.Toggle  id="drop" ></Dropdown.Toggle>
-            <Dropdown.Menu id="menuitem">
-                <Dropdown.Item onClick={() => { console.log("Report!") }}>Report</Dropdown.Item>
+        <Dropdown as={ButtonGroup}>
+            <Dropdown.Toggle split variant="success" id="dropdown-split-basic" size="sm" />
+
+            <Dropdown.Menu id="drop">
+                <Dropdown.Item id="menuitem" onClick={() => { console.log("Report!"); console.log(props.messageObject.id); props.reportOnClick(props.messageObject.id) }}>Report</Dropdown.Item>
             </Dropdown.Menu>
         </Dropdown>
     )
 
     const fileDownloaded = (file, fileName) => {
-        console.log("HEY");
-        console.log(file);
+        // console.log("HEY");
+        // console.log(file);
         fileDownload(file, fileName);
     }
 
@@ -63,7 +64,7 @@ function TextMessage(props) {
                 <div className="message-user" >
                     <div className="user-name">{props.messageObject.owner}</div>
                     <div className="spacer"></div>
-                    {hover ? <div className="options" ><DropdownElement /></div> : null}
+                    {hover && !props.messageObject.isReported && props.conversationType === "channels" ? <div className="options" ><DropdownElement /></div> : null}
                 </div>
 
                 {props.messageObject.type === "text" ? (
@@ -77,7 +78,7 @@ function TextMessage(props) {
                             src={`https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/${getCoords(
                                 props.messageObject.content
                             )},11,0/400x200@2x?access_token=pk.eyJ1Ijoic2F0dmlrZGFuZGFsZSIsImEiOiJja2JpMmJkdGQwYjZhMnRwamlmYmhmZDQ5In0.xEAG7PvsDEt0lM4PCUQ_NA&logo=false`}
-                            alt="location-image"
+                            alt="location"
                             className="static-map"
                         ></img>
                     </div>
@@ -103,6 +104,12 @@ function TextMessage(props) {
 }
 
 class MessageList extends React.Component {
+    reportOnClick = (Mid) => {
+        console.log("REPORT CLICKED")
+        console.log(Mid)
+        this.props.reportMessageFromChat(Mid);
+    }
+
     componentDidMount() {
         Prism.highlightAll();
         const height = this.refs.messageScrollbar.getScrollHeight();
@@ -122,12 +129,16 @@ class MessageList extends React.Component {
                 {this.props.messageList.map((message, index) => {
                     let date = new Date(message.createdAt);
                     const time = date.toTimeString().split(" ")[0];
+                    console.log(message)
                     let messageObject = {
-                        content: message.content,
+                        content: message.isReported ? "This message was reported" : message.content,
                         owner: "unknown",
-                        type: message.type,
+                        type: message.isReported ? "text" : message.type,
                         time: time,
+                        id: message._id,
+                        isReported: message.isReported
                     };
+                    console.log(messageObject)
                     if (message.owner) {
                         if (message.owner.username)
                             messageObject.owner = message.owner.username;
@@ -136,10 +147,12 @@ class MessageList extends React.Component {
                     Prism.highlightAll();
                     return (
                         <TextMessage
+                            conversationType={this.props.conversationType}
                             keyValue={index}
                             messageObject={messageObject}
                             currentUser={this.props.currentUser}
                             downloadFile={this.props.downloadFile}
+                            reportOnClick={this.reportOnClick}
                         />
                     );
                 })}

@@ -2,11 +2,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Prism from 'prismjs'
 
-import fileSelectModel from './fileSelectModal';
 import CodeSnippetModel from './codeSnippetModal';
 import NewMessageComponent from './newMessage';
 import MessageList from './messageList';
-import { addNewMessage, uploadFile } from '../../../store/actions/chatActions';
+import { addNewMessage, uploadFile, reportMes } from '../../../store/actions/chatActions';
 import FileSelectModal from './fileSelectModal';
 
 
@@ -41,9 +40,9 @@ class ChatBox extends React.Component {
     }
 
 
-    handleNewMessageChange = (event) => {
+    handleNewMessageChange = (value) => {
         this.setState({
-            message: event.target.value
+            message: value
         })
     }
 
@@ -146,22 +145,27 @@ class ChatBox extends React.Component {
         })
     }
 
+    reportMessageFromChat = (Mid) => {
+        console.log("REPORT receive to chat box")
+        console.log(Mid, this.props.currentConversation[0], this.props.currentConversation[1].name)
+        let mObject = {id: Mid, convoType: this.props.currentConversation[0], convoName: this.props.currentConversation[1].name, roomName: this.props.roomName}
+        this.props.reportMes(mObject)
+        console.log(mObject)
+    }
+
     render() {
         // console.log(this.props)
         let title = "";
         let description = null;
-        let isPersonal = "";
         let conversation = null;
 
         if (this.props.currentConversation[0] === "channels") {
             conversation = this.props.currentConversation[1];
             title = conversation.name;
             description = conversation.description;
-            isPersonal = false;
         } else {
             conversation = this.props.currentConversation[1];
             title = conversation.name;
-            isPersonal = true;
         }
 
         // console.log(this.props)
@@ -177,7 +181,12 @@ class ChatBox extends React.Component {
                     </div>
                 </div>
                 <div className="chat-message">
-                    <MessageList currentUser={this.props.currentUser} messageList={conversation.messages} />
+                    <MessageList 
+                        currentUser={this.props.currentUser} 
+                        messageList={conversation.messages} 
+                        reportMessageFromChat={this.reportMessageFromChat}
+                        conversationType={this.props.currentConversation[0]}
+                    />
                 </div>
                 <div className="new-message">
                     <NewMessageComponent
@@ -205,7 +214,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         addNewMessage: (message, typeOfConversation, conversationName) => { dispatch(addNewMessage(message, typeOfConversation, conversationName)) },
-        uploadFile: (file, fileName, callback) => { dispatch(uploadFile(file, fileName, callback)) }
+        uploadFile: (file, fileName, callback) => { dispatch(uploadFile(file, fileName, callback)) },
+        reportMes: (mObject) => { dispatch(reportMes(mObject)) }
     }
 }
 

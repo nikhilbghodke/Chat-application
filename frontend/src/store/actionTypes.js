@@ -21,6 +21,7 @@ export const ROOM_LOADING_START = "ROOM_LOADING_START";
 export const SET_ROOM_ERROR = "SET_ROOM_ERROR";
 // export const UPLOAD_FILE = "UPLOAD_FILE";
 // export const DOWLOAD_FILE = "DOWNLOAD_FILE";
+export const REPORT_MESSAGE = "REPORT_MESSAGE";
 
 /*****Get Members */
 

@@ -1,9 +1,9 @@
 import React from 'react';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { HashRouter, Switch, Route } from 'react-router-dom';
 import { Provider } from "react-redux";
 
 import { configureStore } from "../src/store";
-import { setAuthorizationToken, setCurrentUser } from "../src/store/actions/auth";
+import { setAuthorizationToken } from "../src/store/actions/auth";
 import Welcome from './Components/Welcome'
 import NotFound from './Components/404Error'
 import AuthenticationPage from './Components/AuthenticationPage'
@@ -25,7 +25,7 @@ function App() {
 
     return (
       <Provider store={store}>
-        <BrowserRouter>
+        <HashRouter>
           <div className="App">
             <Switch>
               <Route path="/" exact strict component={Welcome} />
@@ -35,7 +35,7 @@ function App() {
               <Route component={NotFound} />
             </Switch>
           </div>
-        </BrowserRouter>
+        </HashRouter>
       </Provider>
     );
 }
