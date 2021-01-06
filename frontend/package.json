@@ -11,7 +11,7 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "an-array-of-english-words": "^2.0.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "bootstrap": "^4.5.0",
     "http-server": "^0.12.3",
     "js-file-download": "^0.4.12",
